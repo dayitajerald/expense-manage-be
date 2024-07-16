@@ -4,6 +4,8 @@ import com.expense.app.dto.AuthDto;
 import com.expense.app.dto.RegisterDto;
 import com.expense.app.entity.AuthEntity;
 import com.expense.app.entity.UserEntity;
+import com.expense.app.middleware.JwtTokenUtil;
+import com.expense.app.model.TokenModel;
 import com.expense.app.repository.AuthRepository;
 import com.expense.app.repository.UserRepository;
 import org.springframework.beans.BeanUtils;
@@ -20,24 +22,25 @@ public class AuthService {
     @Autowired
     private UserRepository userRepo;
 
-    public ResponseEntity<AuthDto> login(AuthEntity user){
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
+
+    public ResponseEntity<AuthDto> login(AuthEntity user) {
         AuthEntity found = authRepo.findByUsername(user.getUsername());
         AuthDto response = new AuthDto();
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-        if(found == null){
+        if (found == null) {
             response.setStatus(401);
             response.setMessage("User not found");
-        }
-        else{
+        } else {
 
-            if(passwordEncoder.matches(user.getPassword(), found.getPassword())){
+            if (passwordEncoder.matches(user.getPassword(), found.getPassword())) {
                 response.setRole(found.getRole());
                 response.setStatus(200);
                 response.setMessage("User logged in");
-            }
-
-            else{
+                response.setToken(jwtTokenUtil.generateToken(found));
+            } else {
                 response.setStatus(401);
                 response.setMessage("Invalid Username or password");
             }
@@ -71,5 +74,21 @@ public class AuthService {
             }
         }
         return ResponseEntity.status(user.getStatus()).body(user);
+    }
+
+    public boolean validateToken(String token) {
+        if (jwtTokenUtil.isTokenExpired(token)) {
+            return false;
+        } else {
+            TokenModel tokenModel = jwtTokenUtil.getTokenModelfromToken(token);
+            if (tokenModel == null) {
+                return false;
+            }
+            if (tokenModel.getRole() == 0) {
+                return userRepo.existsByAuthId(tokenModel.getId());
+            } else {
+                return false;
+            }
+        }
     }
 }

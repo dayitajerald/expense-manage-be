@@ -1,10 +1,15 @@
 package com.expense.app.middleware;
 
+import com.expense.app.entity.AuthEntity;
+import com.expense.app.model.TokenModel;
+import io.jsonwebtoken.Jwts;
 import org.springframework.beans.BeanUtils;
+import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
 
+@Component
 public class JwtTokenUtil {
 
     private static final SecretKey SECRET_KEY = Jwts.SIG.HS512.key().build(); // Replace with your secret key
