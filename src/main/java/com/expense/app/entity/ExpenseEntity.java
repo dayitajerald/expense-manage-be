@@ -1,5 +1,6 @@
 package com.expense.app.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 @Entity
 @Data
 @Table(name = "expense")
+@JsonIgnoreProperties({"user"}) // Ignore user field during serialization
 public class ExpenseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,4 +28,8 @@ public class ExpenseEntity {
 
     @UpdateTimestamp
     private LocalDateTime updated_at;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", referencedColumnName = "authId")
+    private UserEntity user;
 }
