@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class ExpenseDto {
-    private String expenseId;
+    private Integer expenseId;
     private String userId;
     private String userName;
     private Float amount;

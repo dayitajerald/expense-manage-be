@@ -61,13 +61,14 @@ public class ExpenseService {
 //        expenseEntity.setReceipt(expense.getReceipt());
 //        expenseEntity.setUserId(tokenModel.getId());
         BeanUtils.copyProperties(expense, expenseEntity);
+        //expenseEntity.setUserId(tokenModel.getId());
         expenseEntity.setCreated_at(LocalDateTime.now());
         expenseEntity.setUpdated_at(LocalDateTime.now());
         System.out.println(expenseEntity);
         return expenseRepository.save(expenseEntity);
     }
 
-    public void deleteUserExpense(String token, String id) {
+    public void deleteUserExpense(String token, Integer id) {
         TokenModel tokenModel = jwtTokenUtil.getTokenModelfromToken(token.split(" ")[1]);
         //expense.setUserId(tokenModel.getId());
         System.out.println(id );

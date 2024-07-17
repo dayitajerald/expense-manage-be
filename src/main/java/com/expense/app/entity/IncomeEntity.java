@@ -11,19 +11,22 @@ import java.time.LocalDateTime;
 
 @Entity
 @Data
-@Table(name = "expense")
-public class ExpenseEntity {
+@Table(name = "income")
+public class IncomeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer expenseId;
+    private Integer incomeId;
+    private String userId;
     private Float amount;
+    private String source;
     private String description;
     private LocalDate date;
-    private String receipt;
 
     @CreationTimestamp
     private LocalDateTime created_at;
 
     @UpdateTimestamp
     private LocalDateTime updated_at;
+
+
 }

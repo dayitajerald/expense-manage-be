@@ -8,10 +8,10 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ExpenseRepository extends JpaRepository<ExpenseEntity, String> {
+public interface ExpenseRepository extends JpaRepository<ExpenseEntity, Integer> {
     public List<ExpenseEntity> findByUserId(String userId);
 
     @Transactional
-    public void deleteByExpenseId(String expenseId);
+    public void deleteByExpenseId(Integer expenseId);
 
 }

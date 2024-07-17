@@ -33,7 +33,7 @@ public class ExpenseController {
     }
 
     @DeleteMapping()
-    public void deleteUserExpense(@RequestHeader("Authorization") String token, @RequestParam String id){
+    public void deleteUserExpense(@RequestHeader("Authorization") String token, @RequestParam Integer id){
         expenseService.deleteUserExpense(token,id);
     }
 }
