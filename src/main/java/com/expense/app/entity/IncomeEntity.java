@@ -1,5 +1,6 @@
 package com.expense.app.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -12,14 +13,13 @@ import java.time.LocalDateTime;
 @Entity
 @Data
 @Table(name = "income")
+@JsonIgnoreProperties({"user"})
 public class IncomeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer incomeId;
-    private String userId;
     private Float amount;
-    private String source;
-    private String description;
+    private String category;
     private LocalDate date;
 
     @CreationTimestamp
@@ -28,5 +28,8 @@ public class IncomeEntity {
     @UpdateTimestamp
     private LocalDateTime updated_at;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", referencedColumnName = "authId")
+    private UserEntity user;
 
 }
