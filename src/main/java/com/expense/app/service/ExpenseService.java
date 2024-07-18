@@ -55,12 +55,34 @@ public class ExpenseService {
         return expenseRepository.save(expense);
     }
 
-    public ExpenseEntity updateUserExpense(String token, ExpenseEntity expense) {
-        TokenModel tokenModel = jwtTokenUtil.getTokenModelfromToken(token.split(" ")[1]);
-        ExpenseEntity existingExpense = expenseRepository.findById(expense.getExpenseId()).orElseThrow(() -> new RuntimeException("Expense not found"));
-        BeanUtils.copyProperties(expense, existingExpense, "expenseId", "user", "created_at", "updated_at");
-        existingExpense.setUpdated_at(LocalDateTime.now());
-        return expenseRepository.save(existingExpense);
+    public ExpenseEntity updateExpenseField(Integer expenseId, String fieldName, String newValue) {
+        ExpenseEntity expense = expenseRepository.findById(expenseId)
+                .orElseThrow(() -> new RuntimeException("Expense not found"));
+        try {
+            switch (fieldName) {
+                case "amount":
+                    expense.setAmount(Float.parseFloat(newValue));
+                    break;
+                case "category":
+                    expense.setCategory(Integer.parseInt(newValue));
+                    break;
+                case "date":
+                    expense.setDate(LocalDate.parse(newValue));
+                    break;
+                case "description":
+                    expense.setDescription(newValue);
+                    break;
+                case "receipt":
+                    expense.setReceipt(newValue);
+                    break;
+                default:
+                    throw new RuntimeException("Invalid field name");
+            }
+        } catch (NumberFormatException e) {
+            throw new RuntimeException("Invalid format for field: " + fieldName, e);
+        }
+
+        return expenseRepository.save(expense);
     }
 
     public void deleteUserExpense(String token, Integer id) {
