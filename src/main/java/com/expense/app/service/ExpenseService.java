@@ -37,6 +37,7 @@ public class ExpenseService {
             ExpenseDto expenseDto = new ExpenseDto();
             expenseDto.setExpenseId(expense.getExpenseId());
             expenseDto.setAmount(expense.getAmount());
+            expenseDto.setCategory(expense.getCategory());
             expenseDto.setDate(expense.getDate().toString());
             expenseDto.setDescription(expense.getDescription());
             expenseDto.setReceipt(expense.getReceipt());
@@ -65,6 +66,12 @@ public class ExpenseService {
     public void deleteUserExpense(String token, Integer id) {
         ExpenseEntity existingExpense = expenseRepository.findById(id).orElseThrow(() -> new RuntimeException("Expense not found"));
         expenseRepository.delete(existingExpense);
+    }
+
+    public Float getTotalExpense(String token){
+        TokenModel tokenModel = jwtTokenUtil.getTokenModelfromToken(token.split(" ")[1]);
+        String authId = tokenModel.getId();
+        return expenseRepository.findSumOfExpensesByUserId(authId);
     }
 
 

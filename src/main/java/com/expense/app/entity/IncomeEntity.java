@@ -19,7 +19,7 @@ public class IncomeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer incomeId;
     private Float amount;
-    private String category;
+    private Integer category;
     private LocalDate date;
 
     @CreationTimestamp

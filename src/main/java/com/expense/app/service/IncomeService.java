@@ -38,6 +38,7 @@ public class IncomeService {
             IncomeDto incomeDto = new IncomeDto();
             incomeDto.setIncomeId(income.getIncomeId());
             incomeDto.setAmount(income.getAmount());
+            incomeDto.setCategory(income.getCategory());
             incomeDto.setDate(income.getDate().toString());
             incomeDto.setUserName(income.getUser().getName());
             incomeDtos.add(incomeDto);

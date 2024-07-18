@@ -8,6 +8,7 @@ public class ExpenseDto {
     private String userId;
     private String userName;
     private Float amount;
+    private Integer category;
     private String description;
     private String date;
     private String receipt;
