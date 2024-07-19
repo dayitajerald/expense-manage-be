@@ -59,13 +59,14 @@ public class AuthService {
             BeanUtils.copyProperties(user, auth);
             auth.setPassword(passwordEncoder.encode(auth.getPassword()));
             auth = authRepo.save(auth);
+            System.out.println(user);
 
             if (auth.getRole() == 0) {
                 UserEntity customer = new UserEntity();
                 BeanUtils.copyProperties(user, customer);
                 customer.setAuthId(auth.getId());
                 userRepo.save(customer);
-                user.setStatus(200);
+                user.setStatus(201);
                 user.setMessage("User registered successfully");
 
             } else {

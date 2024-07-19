@@ -19,7 +19,6 @@ public class IncomeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer incomeId;
     private Float amount;
-    private Integer category;
     private LocalDate date;
 
     @CreationTimestamp
@@ -31,5 +30,9 @@ public class IncomeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "authId")
     private UserEntity user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category", referencedColumnName = "categoryId")
+    private CategoryEntity category;
 
 }

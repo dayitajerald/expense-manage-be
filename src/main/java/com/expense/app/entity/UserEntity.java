@@ -34,4 +34,5 @@ public class UserEntity {
 
     @OneToMany(fetch = FetchType.LAZY,mappedBy = "user",orphanRemoval = true)
     private List<IncomeEntity> incomes = new ArrayList<>();
+
 }

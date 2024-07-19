@@ -19,7 +19,6 @@ public class ExpenseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer expenseId;
     private Float amount;
-    private Integer category;
     private String description;
     private LocalDate date;
     private String receipt;
@@ -33,4 +32,8 @@ public class ExpenseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "authId")
     private UserEntity user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category", referencedColumnName = "categoryId")
+    private CategoryEntity category;
 }
