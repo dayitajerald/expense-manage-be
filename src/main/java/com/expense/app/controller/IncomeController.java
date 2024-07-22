@@ -1,6 +1,5 @@
 package com.expense.app.controller;
 
-
 import com.expense.app.dto.IncomeDto;
 import com.expense.app.entity.IncomeEntity;
 import com.expense.app.service.IncomeService;
@@ -21,14 +20,16 @@ public class IncomeController {
     }
 
     @PostMapping()
-    public IncomeEntity createUserIncome(@RequestHeader("Authorization") String token, @RequestBody IncomeEntity income) {
+    public IncomeEntity createUserIncome(@RequestHeader("Authorization") String token,
+            @RequestBody IncomeEntity income) {
         return incomeService.createUserExpense(token, income);
     }
 
-    @PutMapping()
-    public IncomeEntity updateUserIncome(@RequestHeader("Authorization") String token, @RequestBody IncomeEntity income) {
-        return incomeService.updateUserExpense(token, income);
-    }
+    // @PutMapping()
+    // public IncomeEntity updateUserIncome(@RequestHeader("Authorization") String
+    // token, @RequestBody IncomeEntity income) {
+    // return incomeService.updateUserExpense(token, income);
+    // }
 
     @DeleteMapping()
     public void deleteUserIncome(@RequestHeader("Authorization") String token, @RequestBody Integer id) {
