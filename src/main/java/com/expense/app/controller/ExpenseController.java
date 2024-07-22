@@ -1,6 +1,7 @@
 package com.expense.app.controller;
 
 import com.expense.app.dto.ExpenseDto;
+import com.expense.app.dto.TotalExpenseDto;
 import com.expense.app.entity.ExpenseEntity;
 import com.expense.app.service.ExpenseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,13 +45,13 @@ public class ExpenseController {
         }
     }
 
-    @DeleteMapping("remove")
+    @DeleteMapping("/remove")
     public void deleteUserExpense(@RequestHeader("Authorization") String token, @RequestParam Integer id){
         expenseService.deleteUserExpense(token,id);
     }
 
     @GetMapping("/total")
-    public Float getTotalExpense(@RequestHeader("Authorization") String token){
+    public TotalExpenseDto getTotalExpense(@RequestHeader("Authorization") String token){
         return expenseService.getTotalExpense(token);
     }
 }

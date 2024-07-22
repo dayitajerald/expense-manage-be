@@ -2,6 +2,7 @@ package com.expense.app.service;
 
 
 import com.expense.app.dto.ExpenseDto;
+import com.expense.app.dto.TotalExpenseDto;
 import com.expense.app.entity.ExpenseEntity;
 import com.expense.app.entity.UserEntity;
 import com.expense.app.model.TokenModel;
@@ -37,7 +38,7 @@ public class ExpenseService {
             ExpenseDto expenseDto = new ExpenseDto();
             expenseDto.setExpenseId(expense.getExpenseId());
             expenseDto.setAmount(expense.getAmount());
-            expenseDto.setCategory(expense.getCategory());
+            expenseDto.setCategory(expense.getCategoryId());
             expenseDto.setDate(expense.getDate().toString());
             expenseDto.setDescription(expense.getDescription());
             expenseDto.setReceipt(expense.getReceipt());
@@ -64,7 +65,7 @@ public class ExpenseService {
                     expense.setAmount(Float.parseFloat(newValue));
                     break;
                 case "category":
-                    expense.setCategory(Integer.parseInt(newValue));
+                    expense.setCategoryId(Integer.parseInt(newValue));
                     break;
                 case "date":
                     expense.setDate(LocalDate.parse(newValue));
@@ -90,10 +91,12 @@ public class ExpenseService {
         expenseRepository.delete(existingExpense);
     }
 
-    public Float getTotalExpense(String token){
+    public TotalExpenseDto getTotalExpense(String token){
         TokenModel tokenModel = jwtTokenUtil.getTokenModelfromToken(token.split(" ")[1]);
         String authId = tokenModel.getId();
-        return expenseRepository.findSumOfExpensesByUserId(authId);
+        TotalExpenseDto ted = new TotalExpenseDto();
+        ted.setTotalExpense(expenseRepository.findSumOfExpensesByUserId(authId));
+        return ted;
     }
 
 

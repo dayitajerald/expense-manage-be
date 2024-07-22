@@ -13,11 +13,11 @@ import java.util.List;
 @JsonIgnoreProperties({"categories"})
 public class CategoryEntity {
     @Id
-    private int categoryId;
+    private Integer categoryId;
     private String name;
     private String type;
 
-    @OneToMany(fetch = FetchType.LAZY,mappedBy = "category",orphanRemoval = true)
-    private List<CategoryEntity> categories = new ArrayList<>();
+//    @OneToMany(fetch = FetchType.LAZY,mappedBy = "category",orphanRemoval = true)
+//    private List<CategoryEntity> categories = new ArrayList<>();
 
 }
