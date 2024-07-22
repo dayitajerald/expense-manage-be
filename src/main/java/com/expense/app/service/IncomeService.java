@@ -32,7 +32,7 @@ public class IncomeService {
     public List<IncomeDto> getUserExpenses(String token) {
         TokenModel tokenModel = jwtTokenUtil.getTokenModelfromToken(token.split(" ")[1]);
         String authId = tokenModel.getId();
-        List<IncomeEntity> incomes = incomeRepository.findByUser_AuthId(authId);
+        List<IncomeEntity> incomes = incomeRepository.findByUserId(authId);
         List<IncomeDto> incomeDtos = new ArrayList<>();
         for (IncomeEntity income : incomes) {
             IncomeDto incomeDto = new IncomeDto();

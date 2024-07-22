@@ -22,7 +22,6 @@ public class ExpenseEntity {
     private String description;
     private LocalDate date;
     private String receipt;
-    private Integer categoryId;
 
     @CreationTimestamp
     private LocalDateTime created_at;
@@ -34,7 +33,7 @@ public class ExpenseEntity {
     @JoinColumn(name = "user_id", referencedColumnName = "authId")
     private UserEntity user;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "category", referencedColumnName = "categoryId")
-//    private CategoryEntity category;
+    @ManyToOne()
+    @JoinColumn(name = "category_id", referencedColumnName = "categoryId")
+    private CategoryEntity category;
 }

@@ -3,9 +3,11 @@ package com.expense.app.service;
 
 import com.expense.app.dto.ExpenseDto;
 import com.expense.app.dto.TotalExpenseDto;
+import com.expense.app.entity.CategoryEntity;
 import com.expense.app.entity.ExpenseEntity;
 import com.expense.app.entity.UserEntity;
 import com.expense.app.model.TokenModel;
+import com.expense.app.repository.CategoryRepository;
 import com.expense.app.repository.ExpenseRepository;
 import com.expense.app.repository.UserRepository;
 import org.springframework.beans.BeanUtils;
@@ -29,29 +31,39 @@ public class ExpenseService {
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
-    public List<ExpenseDto> getUserExpenses(String token) {
+//    public List<ExpenseDto> getUserExpenses(String token) {
+//        TokenModel tokenModel = jwtTokenUtil.getTokenModelfromToken(token.split(" ")[1]);
+//        String authId = tokenModel.getId();
+//        List<ExpenseEntity> expenses = expenseRepository.findByUserId(authId);
+//        List<ExpenseDto> expenseDtos = new ArrayList<>();
+//        for (ExpenseEntity expense : expenses) {
+//            ExpenseDto expenseDto = new ExpenseDto();
+//            expenseDto.setExpenseId(expense.getExpenseId());
+//            expenseDto.setAmount(expense.getAmount());
+//            expenseDto.setCategory(expense.getCategoryId());
+//            expenseDto.setDate(expense.getDate().toString());
+//            expenseDto.setDescription(expense.getDescription());
+//            expenseDto.setReceipt(expense.getReceipt());
+//            expenseDto.setUserName(expense.getUser().getName());
+//            expenseDtos.add(expenseDto);
+//        }
+//        return expenseDtos;
+//    }
+
+    public List<ExpenseEntity> getUserExpenses(String token){
         TokenModel tokenModel = jwtTokenUtil.getTokenModelfromToken(token.split(" ")[1]);
         String authId = tokenModel.getId();
         List<ExpenseEntity> expenses = expenseRepository.findByUserId(authId);
-        List<ExpenseDto> expenseDtos = new ArrayList<>();
-        for (ExpenseEntity expense : expenses) {
-            ExpenseDto expenseDto = new ExpenseDto();
-            expenseDto.setExpenseId(expense.getExpenseId());
-            expenseDto.setAmount(expense.getAmount());
-            expenseDto.setCategory(expense.getCategoryId());
-            expenseDto.setDate(expense.getDate().toString());
-            expenseDto.setDescription(expense.getDescription());
-            expenseDto.setReceipt(expense.getReceipt());
-            expenseDto.setUserName(expense.getUser().getName());
-            expenseDtos.add(expenseDto);
-        }
-        return expenseDtos;
+        return expenses;
     }
 
-    public ExpenseEntity createUserExpense(String token, ExpenseEntity expense) {
+    public ExpenseEntity createUserExpense(String token, ExpenseEntity data) {
         TokenModel tokenModel = jwtTokenUtil.getTokenModelfromToken(token.split(" ")[1]);
         UserEntity user = userRepository.findById(tokenModel.getId()).orElseThrow(() -> new RuntimeException("User not found"));
+        ExpenseEntity expense = new ExpenseEntity();
         expense.setUser(user);
+
+        CategoryEntity category = CategoryRepository
         expense.setDate(LocalDate.now());
         return expenseRepository.save(expense);
     }

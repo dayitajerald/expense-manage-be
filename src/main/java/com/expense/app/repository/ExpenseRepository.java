@@ -1,5 +1,6 @@
 package com.expense.app.repository;
 
+import com.expense.app.entity.CategoryEntity;
 import com.expense.app.entity.ExpenseEntity;
 import com.expense.app.entity.UserEntity;
 import jakarta.transaction.Transactional;
@@ -21,6 +22,8 @@ public interface ExpenseRepository extends JpaRepository<ExpenseEntity, Integer>
 
     @Query("SELECT e from ExpenseEntity e where e.user.authId = :userId")
     List<ExpenseEntity> findByUserId(@Param("userId") String userId);
+
+    ExpenseEntity findByExpenseId(Integer expenseId);
     @Transactional
     public void deleteByExpenseId(Integer expenseId);
 

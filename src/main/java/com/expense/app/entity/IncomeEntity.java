@@ -20,7 +20,6 @@ public class IncomeEntity {
     private Integer incomeId;
     private Float amount;
     private LocalDate date;
-    private Integer categoryId;
 
     @CreationTimestamp
     private LocalDateTime created_at;
@@ -32,8 +31,8 @@ public class IncomeEntity {
     @JoinColumn(name = "user_id", referencedColumnName = "authId")
     private UserEntity user;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "category", referencedColumnName = "categoryId")
-//    private CategoryEntity category;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id", referencedColumnName = "categoryId")
+    private CategoryEntity category;
 
 }

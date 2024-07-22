@@ -17,7 +17,11 @@ public class CategoryEntity {
     private String name;
     private String type;
 
-//    @OneToMany(fetch = FetchType.LAZY,mappedBy = "category",orphanRemoval = true)
-//    private List<CategoryEntity> categories = new ArrayList<>();
+
+    @OneToMany(mappedBy = "category")
+    private List<ExpenseEntity> expenses;
+
+    @OneToMany(fetch = FetchType.LAZY,mappedBy = "category",orphanRemoval = true)
+    private List<IncomeEntity> incomes ;
 
 }
