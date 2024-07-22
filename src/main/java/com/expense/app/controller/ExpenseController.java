@@ -28,7 +28,7 @@ public class ExpenseController {
     }
 
     @PostMapping("/create")
-    public ExpenseEntity createUserExpense(@RequestHeader("Authorization") String token, @RequestBody ExpenseDto expense){
+    public ExpenseEntity createUserExpense(@RequestHeader(value = "Authorization") String token, @RequestBody ExpenseDto expense){
         return expenseService.createUserExpense(token,expense);
     }
 

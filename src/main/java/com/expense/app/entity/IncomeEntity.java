@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Entity
 @Data
 @Table(name = "income")
-@JsonIgnoreProperties({"user"})
+@JsonIgnoreProperties({"user","category"})
 public class IncomeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

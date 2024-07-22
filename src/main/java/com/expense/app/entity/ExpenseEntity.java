@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Entity
 @Data
 @Table(name = "expense")
-@JsonIgnoreProperties({"user"}) // Ignore user field during serialization
+@JsonIgnoreProperties({"user","category"}) // Ignore user field during serialization
 public class ExpenseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

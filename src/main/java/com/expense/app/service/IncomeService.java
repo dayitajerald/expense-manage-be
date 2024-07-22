@@ -2,11 +2,13 @@ package com.expense.app.service;
 
 import com.expense.app.dto.ExpenseDto;
 import com.expense.app.dto.IncomeDto;
+import com.expense.app.entity.CategoryEntity;
 import com.expense.app.entity.ExpenseEntity;
 import com.expense.app.entity.IncomeEntity;
 import com.expense.app.entity.UserEntity;
 import com.expense.app.middleware.JwtTokenUtil;
 import com.expense.app.model.TokenModel;
+import com.expense.app.repository.CategoryRepository;
 import com.expense.app.repository.IncomeRepository;
 import com.expense.app.repository.UserRepository;
 import org.springframework.beans.BeanUtils;
@@ -27,28 +29,44 @@ public class IncomeService {
     private UserRepository userRepository;
 
     @Autowired
+    private CategoryRepository categoryRepository;
+
+    @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
-    public List<IncomeDto> getUserExpenses(String token) {
+
+//    public List<IncomeDto> getUserExpenses(String token) {
+//        TokenModel tokenModel = jwtTokenUtil.getTokenModelfromToken(token.split(" ")[1]);
+//        String authId = tokenModel.getId();
+//        List<IncomeEntity> incomes = incomeRepository.findByUserId(authId);
+//        List<IncomeDto> incomeDtos = new ArrayList<>();
+//        for (IncomeEntity income : incomes) {
+//            IncomeDto incomeDto = new IncomeDto();
+//            incomeDto.setIncomeId(income.getIncomeId());
+//            incomeDto.setAmount(income.getAmount());
+//            incomeDto.setCategory(income.getCategoryId());
+//            incomeDto.setDate(income.getDate().toString());
+//            incomeDto.setUserName(income.getUser().getName());
+//            incomeDtos.add(incomeDto);
+//        }
+//        return incomeDtos;
+//    }
+
+    public List<IncomeEntity> getUserIncomes(String token){
         TokenModel tokenModel = jwtTokenUtil.getTokenModelfromToken(token.split(" ")[1]);
         String authId = tokenModel.getId();
         List<IncomeEntity> incomes = incomeRepository.findByUserId(authId);
-        List<IncomeDto> incomeDtos = new ArrayList<>();
-        for (IncomeEntity income : incomes) {
-            IncomeDto incomeDto = new IncomeDto();
-            incomeDto.setIncomeId(income.getIncomeId());
-            incomeDto.setAmount(income.getAmount());
-            incomeDto.setCategory(income.getCategoryId());
-            incomeDto.setDate(income.getDate().toString());
-            incomeDto.setUserName(income.getUser().getName());
-            incomeDtos.add(incomeDto);
-        }
-        return incomeDtos;
+        return incomes;
     }
 
-    public IncomeEntity createUserExpense(String token, IncomeEntity income) {
+
+    public IncomeEntity createUserExpense(String token, IncomeDto data) {
         TokenModel tokenModel = jwtTokenUtil.getTokenModelfromToken(token.split(" ")[1]);
         UserEntity user = userRepository.findById(tokenModel.getId()).orElseThrow(() -> new RuntimeException("User not found"));
+        IncomeEntity income = new IncomeEntity();
+        BeanUtils.copyProperties(data,income);
+        CategoryEntity category = categoryRepository.findByCategoryId(data.getCategory());
+        income.setCategory(category);
         income.setUser(user);
         income.setDate(LocalDate.now());
         return incomeRepository.save(income);

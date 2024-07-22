@@ -63,10 +63,10 @@ public class ExpenseService {
         TokenModel tokenModel = jwtTokenUtil.getTokenModelfromToken(token.split(" ")[1]);
         UserEntity user = userRepository.findById(tokenModel.getId()).orElseThrow(() -> new RuntimeException("User not found"));
         ExpenseEntity expense = new ExpenseEntity();
+        BeanUtils.copyProperties(data,expense);
         CategoryEntity category = categoryRepository.findByCategoryId(data.getCategory());
         expense.setCategory(category);
         expense.setUser(user);
-        BeanUtils.copyProperties(data,expense);
         expense.setDate(LocalDate.now());
         return expenseRepository.save(expense);
     }
@@ -80,7 +80,8 @@ public class ExpenseService {
                     expense.setAmount(Float.parseFloat(newValue));
                     break;
                 case "category":
-                    expense.setCategoryId(Integer.parseInt(newValue));
+                    CategoryEntity category = categoryRepository.findByCategoryId(Integer.parseInt(newValue));
+                    expense.setCategory(category);
                     break;
                 case "date":
                     expense.setDate(LocalDate.parse(newValue));
