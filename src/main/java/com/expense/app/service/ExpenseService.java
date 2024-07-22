@@ -32,7 +32,7 @@ public class ExpenseService {
     public List<ExpenseDto> getUserExpenses(String token) {
         TokenModel tokenModel = jwtTokenUtil.getTokenModelfromToken(token.split(" ")[1]);
         String authId = tokenModel.getId();
-        List<ExpenseEntity> expenses = expenseRepository.findByUser_AuthId(authId);
+        List<ExpenseEntity> expenses = expenseRepository.findByUserId(authId);
         List<ExpenseDto> expenseDtos = new ArrayList<>();
         for (ExpenseEntity expense : expenses) {
             ExpenseDto expenseDto = new ExpenseDto();

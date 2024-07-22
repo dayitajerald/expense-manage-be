@@ -30,7 +30,7 @@ public class ExpenseEntity {
     @UpdateTimestamp
     private LocalDateTime updated_at;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne()
     @JoinColumn(name = "user_id", referencedColumnName = "authId")
     private UserEntity user;
 

@@ -29,10 +29,10 @@ public class UserEntity {
     @UpdateTimestamp
     private LocalDateTime updated_at;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", orphanRemoval = true)
-    private List<ExpenseEntity> expenses = new ArrayList<>();
+    @OneToMany(mappedBy = "user")
+    private List<ExpenseEntity> expenses;
 
     @OneToMany(fetch = FetchType.LAZY,mappedBy = "user",orphanRemoval = true)
-    private List<IncomeEntity> incomes = new ArrayList<>();
+    private List<IncomeEntity> incomes ;
 
 }

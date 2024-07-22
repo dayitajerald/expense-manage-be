@@ -38,7 +38,7 @@ public class IncomeService {
             IncomeDto incomeDto = new IncomeDto();
             incomeDto.setIncomeId(income.getIncomeId());
             incomeDto.setAmount(income.getAmount());
-            incomeDto.setCategory(income.getCategory());
+            incomeDto.setCategory(income.getCategoryId());
             incomeDto.setDate(income.getDate().toString());
             incomeDto.setUserName(income.getUser().getName());
             incomeDtos.add(incomeDto);
@@ -54,12 +54,16 @@ public class IncomeService {
         return incomeRepository.save(income);
     }
 
-    public IncomeEntity updateUserExpense(String token, IncomeEntity income) {
-        TokenModel tokenModel = jwtTokenUtil.getTokenModelfromToken(token.split(" ")[1]);
-        IncomeEntity existingIncome = incomeRepository.findById(income.getIncomeId()).orElseThrow(() -> new RuntimeException("Expense not found"));
-        BeanUtils.copyProperties(income, existingIncome, "expenseId", "user", "created_at", "updated_at");
-        existingIncome.setUpdated_at(LocalDateTime.now());
-        return incomeRepository.save(existingIncome);
+    public IncomeEntity updateIncomeField(Integer incomeId, String newValue) {
+        IncomeEntity income = incomeRepository.findById(incomeId)
+                .orElseThrow(() -> new RuntimeException("Expense not found"));
+        try {
+                    income.setAmount(Float.parseFloat(newValue));
+        } catch (NumberFormatException e) {
+            throw new RuntimeException("Error in api");
+        }
+
+        return incomeRepository.save(income);
     }
 
     public void deleteUserExpense(String token, Integer id) {
