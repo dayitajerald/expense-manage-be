@@ -30,6 +30,8 @@ public class ExpenseService {
 
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
+    @Autowired
+    private CategoryRepository categoryRepository;
 
 //    public List<ExpenseDto> getUserExpenses(String token) {
 //        TokenModel tokenModel = jwtTokenUtil.getTokenModelfromToken(token.split(" ")[1]);
@@ -57,13 +59,14 @@ public class ExpenseService {
         return expenses;
     }
 
-    public ExpenseEntity createUserExpense(String token, ExpenseEntity data) {
+    public ExpenseEntity createUserExpense(String token, ExpenseDto data) {
         TokenModel tokenModel = jwtTokenUtil.getTokenModelfromToken(token.split(" ")[1]);
         UserEntity user = userRepository.findById(tokenModel.getId()).orElseThrow(() -> new RuntimeException("User not found"));
         ExpenseEntity expense = new ExpenseEntity();
+        CategoryEntity category = categoryRepository.findByCategoryId(data.getCategory());
+        expense.setCategory(category);
         expense.setUser(user);
-
-        CategoryEntity category = CategoryRepository
+        BeanUtils.copyProperties(data,expense);
         expense.setDate(LocalDate.now());
         return expenseRepository.save(expense);
     }

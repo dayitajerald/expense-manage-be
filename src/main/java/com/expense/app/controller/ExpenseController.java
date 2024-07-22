@@ -23,12 +23,12 @@ public class ExpenseController {
     private ExpenseService expenseService;
 
     @GetMapping("/all")
-    public List<ExpenseDto> getUserExpenses(@RequestHeader("Authorization") String token){
+    public List<ExpenseEntity> getUserExpenses(@RequestHeader("Authorization") String token){
         return expenseService.getUserExpenses(token);
     }
 
     @PostMapping("/create")
-    public ExpenseEntity createUserExpense(@RequestHeader("Authorization") String token, @RequestBody ExpenseEntity expense){
+    public ExpenseEntity createUserExpense(@RequestHeader("Authorization") String token, @RequestBody ExpenseDto expense){
         return expenseService.createUserExpense(token,expense);
     }
 
