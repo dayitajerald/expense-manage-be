@@ -1,5 +1,6 @@
 package com.expense.app.controller;
 
+import com.expense.app.dto.CategoryExpenseSumDto;
 import com.expense.app.dto.ExpenseDto;
 import com.expense.app.dto.TotalExpenseDto;
 import com.expense.app.entity.ExpenseEntity;
@@ -32,18 +33,23 @@ public class ExpenseController {
         return expenseService.createUserExpense(token,expense);
     }
 
-    @PatchMapping("/{expenseId}")
-    public ResponseEntity<ExpenseEntity> updateExpenseField(@PathVariable Integer expenseId, @RequestParam String fieldName, @RequestParam String newValue) {
-        try {
-
-            ExpenseEntity updatedExpense = expenseService.updateExpenseField(expenseId, fieldName, newValue);
-            logger.info("Expense updated successfully");
-            return ResponseEntity.ok(updatedExpense);
-
-        } catch (RuntimeException e) {
-            logger.error("Error updating expense: {}", e.getMessage());
-            return ResponseEntity.badRequest().body(null);
-        }
+//    @PatchMapping("/{expenseId}")
+//    public ResponseEntity<ExpenseEntity> updateExpenseField(@PathVariable Integer expenseId, @RequestParam String fieldName, @RequestParam String newValue) {
+//        try {
+//
+//            ExpenseEntity updatedExpense = expenseService.updateExpenseField(expenseId, fieldName, newValue);
+//            logger.info("Expense updated successfully");
+//            return ResponseEntity.ok(updatedExpense);
+//
+//        } catch (RuntimeException e) {
+//            logger.error("Error updating expense: {}", e.getMessage());
+//            return ResponseEntity.badRequest().body(null);
+//        }
+//    }
+    @PutMapping("/{id}")
+    public ResponseEntity<ExpenseEntity> updateExpense(@PathVariable Integer id, @RequestBody ExpenseDto expenseDetails) {
+        ExpenseEntity updatedExpense = expenseService.updateExpense(id, expenseDetails);
+        return ResponseEntity.ok(updatedExpense);
     }
 
     @DeleteMapping("/{expenseId}")
@@ -54,5 +60,10 @@ public class ExpenseController {
     @GetMapping("/total")
     public TotalExpenseDto getTotalExpense(@RequestHeader("Authorization") String token){
         return expenseService.getTotalExpense(token);
+    }
+
+    @GetMapping("/sum-by-category")
+    public List<CategoryExpenseSumDto> getSumofAmountByCategory(@RequestHeader("Authorization") String token){
+        return expenseService.getSumOfAmountByCategory(token);
     }
 }

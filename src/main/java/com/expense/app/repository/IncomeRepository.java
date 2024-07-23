@@ -19,6 +19,9 @@ public interface IncomeRepository extends JpaRepository<IncomeEntity, Integer> {
     @Query("SELECT i from IncomeEntity i where i.user.authId = :userId")
     List<IncomeEntity> findByUserId(@Param("userId") String userId);
 
+    @Query("SELECT SUM(i.amount) FROM IncomeEntity i WHERE i.user.authId = :userId")
+    Float findSumOfIncomesByUserId(String userId);
+
     @Transactional
     public void deleteByIncomeId(Integer incomeId);
 }

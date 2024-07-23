@@ -4,5 +4,5 @@ import lombok.Data;
 
 @Data
 public class TotalExpenseDto {
-    Float totalExpense;
+    private Float totalExpense;
 }

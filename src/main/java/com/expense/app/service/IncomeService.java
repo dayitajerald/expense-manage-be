@@ -2,6 +2,7 @@ package com.expense.app.service;
 
 import com.expense.app.dto.ExpenseDto;
 import com.expense.app.dto.IncomeDto;
+import com.expense.app.dto.TotalIncomeDto;
 import com.expense.app.entity.CategoryEntity;
 import com.expense.app.entity.ExpenseEntity;
 import com.expense.app.entity.IncomeEntity;
@@ -87,5 +88,13 @@ public class IncomeService {
     public void deleteUserExpense(String token, Integer id) {
         IncomeEntity existingIncome = incomeRepository.findById(id).orElseThrow(() -> new RuntimeException("Expense not found"));
         incomeRepository.delete(existingIncome);
+    }
+
+    public TotalIncomeDto getTotalIncome(String token) {
+        TokenModel tokenModel = jwtTokenUtil.getTokenModelfromToken(token.split(" ")[1]);
+        String authId = tokenModel.getId();
+        TotalIncomeDto tid = new TotalIncomeDto();
+        tid.setTotalIncome(incomeRepository.findSumOfIncomesByUserId(authId));
+        return tid;
     }
 }

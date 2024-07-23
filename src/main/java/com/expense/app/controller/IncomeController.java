@@ -1,6 +1,7 @@
 package com.expense.app.controller;
 
 import com.expense.app.dto.IncomeDto;
+import com.expense.app.dto.TotalIncomeDto;
 import com.expense.app.entity.ExpenseEntity;
 import com.expense.app.entity.IncomeEntity;
 import com.expense.app.service.IncomeService;
@@ -44,6 +45,11 @@ public class IncomeController {
     @DeleteMapping()
     public void deleteUserIncome(@RequestHeader("Authorization") String token, @RequestBody Integer id) {
         incomeService.deleteUserExpense(token, id);
+    }
+
+    @GetMapping("/total")
+    public TotalIncomeDto getTotalExpense(@RequestHeader("Authorization") String token) {
+        return incomeService.getTotalIncome(token);
     }
 
 }

@@ -1,6 +1,7 @@
 package com.expense.app.service;
 
 
+import com.expense.app.dto.CategoryExpenseSumDto;
 import com.expense.app.dto.ExpenseDto;
 import com.expense.app.dto.TotalExpenseDto;
 import com.expense.app.entity.CategoryEntity;
@@ -33,6 +34,8 @@ public class ExpenseService {
     @Autowired
     private CategoryRepository categoryRepository;
 
+    private static final List<String> VALID_CATEGORIES = List.of("Food", "Movie", "Hospital");
+
     public List<ExpenseDto> getUserExpenses(String token) {
         TokenModel tokenModel = jwtTokenUtil.getTokenModelfromToken(token.split(" ")[1]);
         String authId = tokenModel.getId();
@@ -43,7 +46,7 @@ public class ExpenseService {
             expenseDto.setExpenseId(expense.getExpenseId());
             expenseDto.setAmount(expense.getAmount());
             expenseDto.setCategory(expense.getCategory().getCategoryId());
-            expenseDto.setDate(expense.getDate().toString());
+            expenseDto.setDate(expense.getDate());
             expenseDto.setDescription(expense.getDescription());
             expenseDto.setReceipt(expense.getReceipt());
             expenseDtos.add(expenseDto);
@@ -66,37 +69,55 @@ public class ExpenseService {
         CategoryEntity category = categoryRepository.findByCategoryId(data.getCategory());
         expense.setCategory(category);
         expense.setUser(user);
-        expense.setDate(LocalDate.now());
+        //expense.setDate(LocalDate.now());
         return expenseRepository.save(expense);
     }
 
-    public ExpenseEntity updateExpenseField(Integer expenseId, String fieldName, String newValue) {
-        ExpenseEntity expense = expenseRepository.findById(expenseId)
-                .orElseThrow(() -> new RuntimeException("Expense not found"));
-        try {
-            switch (fieldName) {
-                case "amount":
-                    expense.setAmount(Float.parseFloat(newValue));
-                    break;
-                case "category":
-                    CategoryEntity category = categoryRepository.findByCategoryId(Integer.parseInt(newValue));
-                    expense.setCategory(category);
-                    break;
-                case "date":
-                    expense.setDate(LocalDate.parse(newValue));
-                    break;
-                case "description":
-                    expense.setDescription(newValue);
-                    break;
-                case "receipt":
-                    expense.setReceipt(newValue);
-                    break;
-                default:
-                    throw new RuntimeException("Invalid field name");
-            }
-        } catch (NumberFormatException e) {
-            throw new RuntimeException("Invalid format for field: " + fieldName, e);
-        }
+//    public ExpenseEntity updateExpenseField(Integer expenseId, String fieldName, String newValue) {
+//        ExpenseEntity expense = expenseRepository.findById(expenseId)
+//                .orElseThrow(() -> new RuntimeException("Expense not found"));
+//        try {
+//            switch (fieldName) {
+//                case "amount":
+//                    expense.setAmount(Float.parseFloat(newValue));
+//                    break;
+//                case "category":
+//                    CategoryEntity category = categoryRepository.findByCategoryId(Integer.parseInt(newValue));
+//                    expense.setCategory(category);
+//                    break;
+//                case "date":
+//                    expense.setDate(LocalDate.parse(newValue));
+//                    break;
+//                case "description":
+//                    expense.setDescription(newValue);
+//                    break;
+//                case "receipt":
+//                    expense.setReceipt(newValue);
+//                    break;
+//                default:
+//                    throw new RuntimeException("Invalid field name");
+//            }
+//        } catch (NumberFormatException e) {
+//            throw new RuntimeException("Invalid format for field: " + fieldName, e);
+//        }
+//
+//        return expenseRepository.save(expense);
+//    }
+    public ExpenseEntity updateExpense(Integer id, ExpenseDto expenseDetails) {
+        ExpenseEntity expense = expenseRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Expense not found with id: " + id));
+
+        // Validate category
+//        if (!VALID_CATEGORIES.contains(expenseDetails.getCategory())) {
+//            throw new IllegalArgumentException("Invalid category: " + expenseDetails.getCategory());
+//        }
+
+        CategoryEntity category = categoryRepository.findByCategoryId(expenseDetails.getCategory());
+        expense.setCategory(category);
+        expense.setAmount(expenseDetails.getAmount());
+        expense.setDate(expenseDetails.getDate());
+        expense.setDescription(expenseDetails.getDescription());
+        expense.setReceipt(expenseDetails.getReceipt());
 
         return expenseRepository.save(expense);
     }
@@ -116,4 +137,9 @@ public class ExpenseService {
     }
 
 
+    public List<CategoryExpenseSumDto> getSumOfAmountByCategory(String token){
+        TokenModel tokenModel = jwtTokenUtil.getTokenModelfromToken(token.split(" ")[1]);
+        String authId = tokenModel.getId();
+        return expenseRepository.findSumOfAmountByCategoryForUser(authId);
+    }
 }
