@@ -33,31 +33,30 @@ public class ExpenseService {
     @Autowired
     private CategoryRepository categoryRepository;
 
-//    public List<ExpenseDto> getUserExpenses(String token) {
-//        TokenModel tokenModel = jwtTokenUtil.getTokenModelfromToken(token.split(" ")[1]);
-//        String authId = tokenModel.getId();
-//        List<ExpenseEntity> expenses = expenseRepository.findByUserId(authId);
-//        List<ExpenseDto> expenseDtos = new ArrayList<>();
-//        for (ExpenseEntity expense : expenses) {
-//            ExpenseDto expenseDto = new ExpenseDto();
-//            expenseDto.setExpenseId(expense.getExpenseId());
-//            expenseDto.setAmount(expense.getAmount());
-//            expenseDto.setCategory(expense.getCategoryId());
-//            expenseDto.setDate(expense.getDate().toString());
-//            expenseDto.setDescription(expense.getDescription());
-//            expenseDto.setReceipt(expense.getReceipt());
-//            expenseDto.setUserName(expense.getUser().getName());
-//            expenseDtos.add(expenseDto);
-//        }
-//        return expenseDtos;
-//    }
-
-    public List<ExpenseEntity> getUserExpenses(String token){
+    public List<ExpenseDto> getUserExpenses(String token) {
         TokenModel tokenModel = jwtTokenUtil.getTokenModelfromToken(token.split(" ")[1]);
         String authId = tokenModel.getId();
         List<ExpenseEntity> expenses = expenseRepository.findByUserId(authId);
-        return expenses;
+        List<ExpenseDto> expenseDtos = new ArrayList<>();
+        for (ExpenseEntity expense : expenses) {
+            ExpenseDto expenseDto = new ExpenseDto();
+            expenseDto.setExpenseId(expense.getExpenseId());
+            expenseDto.setAmount(expense.getAmount());
+            expenseDto.setCategory(expense.getCategory().getCategoryId());
+            expenseDto.setDate(expense.getDate().toString());
+            expenseDto.setDescription(expense.getDescription());
+            expenseDto.setReceipt(expense.getReceipt());
+            expenseDtos.add(expenseDto);
+        }
+        return expenseDtos;
     }
+
+//    public List<ExpenseEntity> getUserExpenses(String token){
+//        TokenModel tokenModel = jwtTokenUtil.getTokenModelfromToken(token.split(" ")[1]);
+//        String authId = tokenModel.getId();
+//        List<ExpenseEntity> expenses = expenseRepository.findByUserId(authId);
+//        return expenses;
+//    }
 
     public ExpenseEntity createUserExpense(String token, ExpenseDto data) {
         TokenModel tokenModel = jwtTokenUtil.getTokenModelfromToken(token.split(" ")[1]);
@@ -103,6 +102,7 @@ public class ExpenseService {
     }
 
     public void deleteUserExpense(String token, Integer id) {
+        TokenModel tokenModel = jwtTokenUtil.getTokenModelfromToken(token.split(" ")[1]);
         ExpenseEntity existingExpense = expenseRepository.findById(id).orElseThrow(() -> new RuntimeException("Expense not found"));
         expenseRepository.delete(existingExpense);
     }

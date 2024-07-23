@@ -23,7 +23,7 @@ public class ExpenseController {
     private ExpenseService expenseService;
 
     @GetMapping("/all")
-    public List<ExpenseEntity> getUserExpenses(@RequestHeader("Authorization") String token){
+    public List<ExpenseDto> getUserExpenses(@RequestHeader("Authorization") String token){
         return expenseService.getUserExpenses(token);
     }
 
@@ -35,6 +35,7 @@ public class ExpenseController {
     @PatchMapping("/{expenseId}")
     public ResponseEntity<ExpenseEntity> updateExpenseField(@PathVariable Integer expenseId, @RequestParam String fieldName, @RequestParam String newValue) {
         try {
+
             ExpenseEntity updatedExpense = expenseService.updateExpenseField(expenseId, fieldName, newValue);
             logger.info("Expense updated successfully");
             return ResponseEntity.ok(updatedExpense);
@@ -45,9 +46,9 @@ public class ExpenseController {
         }
     }
 
-    @DeleteMapping("/remove")
-    public void deleteUserExpense(@RequestHeader("Authorization") String token, @RequestParam Integer id){
-        expenseService.deleteUserExpense(token,id);
+    @DeleteMapping("/{expenseId}")
+    public void deleteUserExpense(@RequestHeader("Authorization") String token, @PathVariable Integer expenseId){
+        expenseService.deleteUserExpense(token,expenseId);
     }
 
     @GetMapping("/total")
