@@ -48,7 +48,7 @@ public class IncomeController {
     }
 
     @GetMapping("/total")
-    public TotalIncomeDto getTotalExpense(@RequestHeader("Authorization") String token) {
+    public TotalIncomeDto getTotalIncome(@RequestHeader("Authorization") String token) {
         return incomeService.getTotalIncome(token);
     }
 
