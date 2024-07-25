@@ -30,22 +30,9 @@ public class ExpenseController {
 
     @PostMapping("/create")
     public ExpenseEntity createUserExpense(@RequestHeader(value = "Authorization") String token, @RequestBody ExpenseDto expense){
-        return expenseService.createUserExpense(token,expense);
+         return expenseService.createUserExpense(token,expense);
     }
 
-//    @PatchMapping("/{expenseId}")
-//    public ResponseEntity<ExpenseEntity> updateExpenseField(@PathVariable Integer expenseId, @RequestParam String fieldName, @RequestParam String newValue) {
-//        try {
-//
-//            ExpenseEntity updatedExpense = expenseService.updateExpenseField(expenseId, fieldName, newValue);
-//            logger.info("Expense updated successfully");
-//            return ResponseEntity.ok(updatedExpense);
-//
-//        } catch (RuntimeException e) {
-//            logger.error("Error updating expense: {}", e.getMessage());
-//            return ResponseEntity.badRequest().body(null);
-//        }
-//    }
     @PutMapping("/{id}")
     public ResponseEntity<ExpenseEntity> updateExpense(@PathVariable Integer id, @RequestBody ExpenseDto expenseDetails) {
         ExpenseEntity updatedExpense = expenseService.updateExpense(id, expenseDetails);

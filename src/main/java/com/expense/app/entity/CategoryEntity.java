@@ -24,7 +24,7 @@ public class CategoryEntity {
     @OneToMany(fetch = FetchType.LAZY,mappedBy = "category",orphanRemoval = true)
     private List<IncomeEntity> incomes ;
 
-    @OneToMany(mappedBy = "category")
-    private List<BudgetEntity> budgets;
+    @OneToOne(mappedBy = "category")
+    private BudgetEntity budgets;
 
 }

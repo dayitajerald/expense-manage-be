@@ -16,7 +16,12 @@ public class BudgetEntity {
     private LocalDate date;
     private Float amountSpent;
 
-    @ManyToOne()
+    @OneToOne()
     @JoinColumn(name = "category_id", referencedColumnName = "categoryId")
     private CategoryEntity category;
+
+    @ManyToOne()
+    @JoinColumn(name = "user_id", referencedColumnName = "authId")
+    private UserEntity user;
+
 }

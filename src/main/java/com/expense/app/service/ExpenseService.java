@@ -4,22 +4,27 @@ package com.expense.app.service;
 import com.expense.app.dto.CategoryExpenseSumDto;
 import com.expense.app.dto.ExpenseDto;
 import com.expense.app.dto.TotalExpenseDto;
+import com.expense.app.entity.BudgetEntity;
 import com.expense.app.entity.CategoryEntity;
 import com.expense.app.entity.ExpenseEntity;
 import com.expense.app.entity.UserEntity;
 import com.expense.app.model.TokenModel;
+import com.expense.app.repository.BudgetRepository;
 import com.expense.app.repository.CategoryRepository;
 import com.expense.app.repository.ExpenseRepository;
 import com.expense.app.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.expense.app.middleware.JwtTokenUtil;
 
+import javax.swing.text.html.Option;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ExpenseService {
@@ -30,9 +35,13 @@ public class ExpenseService {
     private UserRepository userRepository;
 
     @Autowired
-    private JwtTokenUtil jwtTokenUtil;
-    @Autowired
     private CategoryRepository categoryRepository;
+
+    @Autowired
+    private BudgetRepository budgetRepository;
+
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
 
     private static final List<String> VALID_CATEGORIES = List.of("Food", "Movie", "Hospital");
 
@@ -70,39 +79,21 @@ public class ExpenseService {
         expense.setCategory(category);
         expense.setUser(user);
         //expense.setDate(LocalDate.now());
+
+        Optional<BudgetEntity> budgetOptional = budgetRepository.findByCategoryId(data.getCategory());
+        if(budgetOptional.isPresent()){
+            BudgetEntity budgetEntity = budgetOptional.get();
+            budgetEntity.setAmountSpent(budgetEntity.getAmountSpent()+expense.getAmount());
+            budgetRepository.save(budgetEntity);
+        }
+        else{
+            throw new RuntimeException("Budget not found for category: " + category.getName());
+        }
         return expenseRepository.save(expense);
     }
 
-//    public ExpenseEntity updateExpenseField(Integer expenseId, String fieldName, String newValue) {
-//        ExpenseEntity expense = expenseRepository.findById(expenseId)
-//                .orElseThrow(() -> new RuntimeException("Expense not found"));
-//        try {
-//            switch (fieldName) {
-//                case "amount":
-//                    expense.setAmount(Float.parseFloat(newValue));
-//                    break;
-//                case "category":
-//                    CategoryEntity category = categoryRepository.findByCategoryId(Integer.parseInt(newValue));
-//                    expense.setCategory(category);
-//                    break;
-//                case "date":
-//                    expense.setDate(LocalDate.parse(newValue));
-//                    break;
-//                case "description":
-//                    expense.setDescription(newValue);
-//                    break;
-//                case "receipt":
-//                    expense.setReceipt(newValue);
-//                    break;
-//                default:
-//                    throw new RuntimeException("Invalid field name");
-//            }
-//        } catch (NumberFormatException e) {
-//            throw new RuntimeException("Invalid format for field: " + fieldName, e);
-//        }
-//
-//        return expenseRepository.save(expense);
-//    }
+
+
     public ExpenseEntity updateExpense(Integer id, ExpenseDto expenseDetails) {
         ExpenseEntity expense = expenseRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Expense not found with id: " + id));
