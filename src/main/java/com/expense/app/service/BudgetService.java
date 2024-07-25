@@ -43,7 +43,7 @@ public class BudgetService {
     public BudgetEntity createUserBudget(String token, BudgetDto budgetDto){
         TokenModel tokenModel = jwtTokenUtil.getTokenModelfromToken(token.split(" ")[1]);
         UserEntity user = userRepository.findById(tokenModel.getId()).orElseThrow(() -> new RuntimeException("User not found"));
-
+        System.out.println(budgetDto.getCategoryId());
         Optional<BudgetEntity> bud = budgetRepository.findByCategoryId(budgetDto.getCategoryId());
         if(!bud.isPresent()) {
             BudgetEntity budgetEntity = new BudgetEntity();

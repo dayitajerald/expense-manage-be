@@ -41,9 +41,4 @@ public class ReportController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-    private String extractUserIdFromToken(String token) {
-        // Extract userId from token logic
-        return "exampleUserId"; // Replace with actual extraction logic
-    }
 }

@@ -12,6 +12,7 @@ public class BudgetDto {
 
     public BudgetDto(Integer budgetId, Integer categoryId, String categoryName, Float amountSpent, Float budgetAmount) {
         this.budgetId = budgetId;
+        this.categoryId = categoryId;
         this.categoryName = categoryName;
         this.amountSpent = amountSpent;
         this.budgetAmount = budgetAmount;
