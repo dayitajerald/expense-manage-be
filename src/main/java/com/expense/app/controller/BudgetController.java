@@ -26,7 +26,7 @@ public class BudgetController {
 
     @PostMapping("/create")
     public BudgetEntity createBudget(@RequestHeader("Authorization") String token, @RequestBody BudgetDto budget){
-        return budgetService.createUserBudget(token,budget);
+        return budgetService.reateUserBudget(token,budget);
     }
 
 
