@@ -2,6 +2,7 @@ package com.expense.app.service;
 
 
 import com.expense.app.dto.CategoryExpenseSumDto;
+import com.expense.app.dto.CategoryExpenseTrendDto;
 import com.expense.app.dto.ExpenseDto;
 import com.expense.app.dto.TotalExpenseDto;
 import com.expense.app.entity.BudgetEntity;
@@ -94,7 +95,9 @@ public class ExpenseService {
 
 
 
-    public ExpenseEntity updateExpense(Integer id, ExpenseDto expenseDetails) {
+    public ExpenseEntity updateExpense(String token, Integer id, ExpenseDto expenseDetails) {
+        TokenModel tokenModel = jwtTokenUtil.getTokenModelfromToken(token.split(" ")[1]);
+        UserEntity user = userRepository.findById(tokenModel.getId()).orElseThrow(() -> new RuntimeException("User not found"));
         ExpenseEntity expense = expenseRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Expense not found with id: " + id));
 
@@ -115,6 +118,7 @@ public class ExpenseService {
 
     public void deleteUserExpense(String token, Integer id) {
         TokenModel tokenModel = jwtTokenUtil.getTokenModelfromToken(token.split(" ")[1]);
+        UserEntity user = userRepository.findById(tokenModel.getId()).orElseThrow(() -> new RuntimeException("User not found"));
         ExpenseEntity existingExpense = expenseRepository.findById(id).orElseThrow(() -> new RuntimeException("Expense not found"));
         expenseRepository.delete(existingExpense);
     }
@@ -132,5 +136,11 @@ public class ExpenseService {
         TokenModel tokenModel = jwtTokenUtil.getTokenModelfromToken(token.split(" ")[1]);
         String authId = tokenModel.getId();
         return expenseRepository.findSumOfAmountByCategoryForUser(authId);
+    }
+
+    public List<CategoryExpenseTrendDto> getCategoryExpenseTrendsForUser(String token,LocalDate startDate, LocalDate endDate) {
+        TokenModel tokenModel = jwtTokenUtil.getTokenModelfromToken(token.split(" ")[1]);
+        String authId = tokenModel.getId();
+        return expenseRepository.findCategoryExpenseTrendsForUser(authId,startDate, endDate);
     }
 }

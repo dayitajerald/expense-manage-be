@@ -1,5 +1,6 @@
 package com.expense.app.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -8,6 +9,7 @@ import java.time.LocalDate;
 @Data
 @Entity
 @Table(name = "budget")
+@JsonIgnoreProperties({"user","category"})
 public class BudgetEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

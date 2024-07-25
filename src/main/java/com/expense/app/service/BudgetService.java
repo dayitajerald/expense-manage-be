@@ -1,6 +1,7 @@
 package com.expense.app.service;
 
 import com.expense.app.dto.BudgetDto;
+import com.expense.app.dto.ExpenseDto;
 import com.expense.app.entity.BudgetEntity;
 import com.expense.app.entity.CategoryEntity;
 import com.expense.app.entity.ExpenseEntity;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BudgetService {
@@ -42,20 +44,43 @@ public class BudgetService {
         TokenModel tokenModel = jwtTokenUtil.getTokenModelfromToken(token.split(" ")[1]);
         UserEntity user = userRepository.findById(tokenModel.getId()).orElseThrow(() -> new RuntimeException("User not found"));
 
-        BudgetEntity budgetEntity = new BudgetEntity();
-        BeanUtils.copyProperties(budgetDto,budgetEntity);
-        CategoryEntity category = categoryRepository.findByCategoryId(budgetDto.getCategoryId());
-        budgetEntity.setCategory(category);
-        budgetEntity.setUser(user);
-        return budgetRepository.save(budgetEntity);
-
-
-
-//        CategoryEntity cat = categoryRepository.findByCategoryId(budgetDto.getCategoryId());
-//        BudgetEntity bud = budgetRepository.findByCategoryId(cat);
+        Optional<BudgetEntity> bud = budgetRepository.findByCategoryId(budgetDto.getCategoryId());
+        if(!bud.isPresent()) {
+            BudgetEntity budgetEntity = new BudgetEntity();
+            BeanUtils.copyProperties(budgetDto, budgetEntity);
+            CategoryEntity category = categoryRepository.findByCategoryId(budgetDto.getCategoryId());
+            budgetEntity.setCategory(category);
+            budgetEntity.setUser(user);
+            return budgetRepository.save(budgetEntity);
+        }
+       else{
+           BudgetEntity budgetEntity = bud.get();
+           budgetEntity.setBudgetAmount(budgetDto.getBudgetAmount()+budgetEntity.getBudgetAmount());
+           return budgetRepository.save(budgetEntity);
+        }
 
     }
 
+    public BudgetEntity updateUserBudget(String token, Integer id, BudgetDto budgetDetails){
+        TokenModel tokenModel = jwtTokenUtil.getTokenModelfromToken(token.split(" ")[1]);
+        UserEntity user = userRepository.findById(tokenModel.getId()).orElseThrow(() -> new RuntimeException("User not found"));
+        BudgetEntity budget = budgetRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Expense not found with id: " + id));
+
+        CategoryEntity category = categoryRepository.findByCategoryId(budgetDetails.getCategoryId());
+        budget.setCategory(category);
+        budget.setBudgetAmount(budgetDetails.getBudgetAmount());
+
+        return budgetRepository.save(budget);
+
+    }
+
+    public void deleteUserBudget(String token, Integer id) {
+        TokenModel tokenModel = jwtTokenUtil.getTokenModelfromToken(token.split(" ")[1]);
+        UserEntity user = userRepository.findById(tokenModel.getId()).orElseThrow(() -> new RuntimeException("User not found"));
+        BudgetEntity existingBudget = budgetRepository.findById(id).orElseThrow(() -> new RuntimeException("Budget not found"));
+        budgetRepository.delete(existingBudget);
+    }
 
 
 }

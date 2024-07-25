@@ -36,4 +36,8 @@ public class ExpenseEntity {
     @ManyToOne()
     @JoinColumn(name = "category_id", referencedColumnName = "categoryId")
     private CategoryEntity category;
+
+    public CategoryEntity getCategory() {
+        return category;
+    }
 }

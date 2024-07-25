@@ -26,8 +26,17 @@ public class BudgetController {
 
     @PostMapping("/create")
     public BudgetEntity createBudget(@RequestHeader("Authorization") String token, @RequestBody BudgetDto budget){
-        return budgetService.reateUserBudget(token,budget);
+        return budgetService.createUserBudget(token,budget);
     }
 
+    @PutMapping("/{id}")
+    public BudgetEntity changeBudget(@RequestHeader("Authorization") String token,@PathVariable Integer id, @RequestBody BudgetDto budget){
+        return budgetService.updateUserBudget(token,id,budget);
+    }
+
+    @DeleteMapping("/{expenseId}")
+    public void deleteUserExpense(@RequestHeader("Authorization") String token, @PathVariable Integer expenseId){
+        budgetService.deleteUserBudget(token,expenseId);
+    }
 
 }
