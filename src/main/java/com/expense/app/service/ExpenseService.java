@@ -1,10 +1,7 @@
 package com.expense.app.service;
 
 
-import com.expense.app.dto.CategoryExpenseSumDto;
-import com.expense.app.dto.CategoryExpenseTrendDto;
-import com.expense.app.dto.ExpenseDto;
-import com.expense.app.dto.TotalExpenseDto;
+import com.expense.app.dto.*;
 import com.expense.app.entity.BudgetEntity;
 import com.expense.app.entity.CategoryEntity;
 import com.expense.app.entity.ExpenseEntity;
@@ -23,9 +20,10 @@ import com.expense.app.middleware.JwtTokenUtil;
 import javax.swing.text.html.Option;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ExpenseService {
@@ -124,6 +122,12 @@ public class ExpenseService {
         TokenModel tokenModel = jwtTokenUtil.getTokenModelfromToken(token.split(" ")[1]);
         UserEntity user = userRepository.findById(tokenModel.getId()).orElseThrow(() -> new RuntimeException("User not found"));
         ExpenseEntity existingExpense = expenseRepository.findById(id).orElseThrow(() -> new RuntimeException("Expense not found"));
+        CategoryEntity category = categoryRepository.findByCategoryId(existingExpense.getCategory().getCategoryId());
+        BudgetEntity budgetEntity = budgetRepository.findByIdAndCategoryId(user.getAuthId(), category.getCategoryId());
+        if(budgetEntity != null) {
+            budgetEntity.setAmountSpent(budgetEntity.getAmountSpent() - existingExpense.getAmount());
+            budgetRepository.save(budgetEntity);
+        }
         expenseRepository.delete(existingExpense);
     }
 
@@ -147,4 +151,11 @@ public class ExpenseService {
         String authId = tokenModel.getId();
         return expenseRepository.findCategoryExpenseTrendsForUser(authId,startDate, endDate);
     }
+
+    public double getTotalAmountForMonth(String month) {
+        return expenseRepository.getTotalAmountByMonth(month);
+
+    }
+
+
 }

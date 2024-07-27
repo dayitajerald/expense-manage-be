@@ -1,9 +1,6 @@
 package com.expense.app.controller;
 
-import com.expense.app.dto.CategoryExpenseSumDto;
-import com.expense.app.dto.CategoryExpenseTrendDto;
-import com.expense.app.dto.ExpenseDto;
-import com.expense.app.dto.TotalExpenseDto;
+import com.expense.app.dto.*;
 import com.expense.app.entity.ExpenseEntity;
 import com.expense.app.service.ExpenseService;
 import com.expense.app.service.NotificationService;
@@ -15,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,7 +63,7 @@ public class ExpenseController {
         return expenseService.getSumOfAmountByCategory(token);
     }
 
-    @GetMapping("/api/expense-trends")
+    @GetMapping("/expense-trends")
     public List<CategoryExpenseTrendDto> getExpenseTrends(@RequestHeader("Authorization") String token,
                                                           @RequestParam("startDate") String startDate,
                                                           @RequestParam("endDate") String endDate) {
@@ -73,6 +72,28 @@ public class ExpenseController {
         LocalDate end = LocalDate.parse(endDate);
         return expenseService.getCategoryExpenseTrendsForUser(token, start, end);
     }
+
+    @GetMapping("/percentage-change")
+    public ResponseEntity<PercentageChangeDto> getPercentageChange(
+            @RequestParam("currentMonth") String currentMonth,
+            @RequestParam("previousMonth") String previousMonth) {
+
+        double currentMonthTotal = expenseService.getTotalAmountForMonth(currentMonth);
+        double previousMonthTotal = expenseService.getTotalAmountForMonth(previousMonth);
+
+        double percentageChange = 0;
+        if (previousMonthTotal > 0) {
+            percentageChange = ((currentMonthTotal - previousMonthTotal) / previousMonthTotal) * 100;
+        }
+
+        PercentageChangeDto dto = new PercentageChangeDto();
+        dto.setCurrentMonthTotal(currentMonthTotal);
+        dto.setPreviousMonthTotal(previousMonthTotal);
+        dto.setPercentageChange(percentageChange);
+
+        return ResponseEntity.ok(dto);
+    }
+
 
 //    @PostMapping("/trigger-notifications")
 //    public ResponseEntity<String> triggerNotifications() {
@@ -83,4 +104,5 @@ public class ExpenseController {
 //            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to trigger notification check.");
 //        }
 //    }
+
 }

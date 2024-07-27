@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin("http://localhost:5173")
@@ -20,7 +21,7 @@ public class BudgetController {
     private BudgetService budgetService;
 
     @GetMapping("/category")
-    public List<BudgetDto> getBudgetCategory(@RequestHeader("Authorization") String token){
+    public List<BudgetDto> getBudgetCategory(@RequestHeader("Authorization") String token) {
         return budgetService.getBudgetCategory(token);
     }
 
@@ -34,9 +35,9 @@ public class BudgetController {
         return budgetService.updateUserBudget(token,id,budget);
     }
 
-    @DeleteMapping("/{expenseId}")
-    public void deleteUserExpense(@RequestHeader("Authorization") String token, @PathVariable Integer expenseId){
-        budgetService.deleteUserBudget(token,expenseId);
+    @DeleteMapping("/{budgetId}")
+    public void deleteUserExpense(@RequestHeader("Authorization") String token, @PathVariable Integer budgetId){
+        budgetService.deleteUserBudget(token,budgetId);
     }
 
 }

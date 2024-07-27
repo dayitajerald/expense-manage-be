@@ -34,31 +34,42 @@ public class BudgetService {
     private UserRepository userRepository;
 
 
-    public List<BudgetDto> getBudgetCategory(String token){
+    public List<BudgetDto> getBudgetCategory(String token) {
         TokenModel tokenModel = jwtTokenUtil.getTokenModelfromToken(token.split(" ")[1]);
         String authId = tokenModel.getId();
-        return budgetRepository.findBudgets(authId);
+        return budgetRepository.findBudgets(authId).orElse(null);
     }
+
 
     public BudgetEntity createUserBudget(String token, BudgetDto budgetDto){
         TokenModel tokenModel = jwtTokenUtil.getTokenModelfromToken(token.split(" ")[1]);
         UserEntity user = userRepository.findById(tokenModel.getId()).orElseThrow(() -> new RuntimeException("User not found"));
-        System.out.println(budgetDto.getCategoryId());
+        //System.out.println(budgetDto.getCategoryId());
         Optional<BudgetEntity> bud = budgetRepository.findByCategoryId(budgetDto.getCategoryId());
-        if(!bud.isPresent()) {
+        Optional<List<BudgetDto>> userBudgets = budgetRepository.findBudgets(user.getAuthId());
+
+        if(userBudgets.isPresent()){
+            for(BudgetDto budgetDto1 : userBudgets.get()) {
+                if (budgetDto1.getCategoryId().equals(budgetDto.getCategoryId())) {
+                    BudgetEntity budgetEntity = budgetRepository.findByIdAndCategoryId(user.getAuthId(), budgetDto1.getCategoryId());
+                    budgetEntity.setBudgetAmount(budgetDto.getBudgetAmount() + budgetEntity.getBudgetAmount());
+                    return budgetRepository.save(budgetEntity);
+                }
+            }
             BudgetEntity budgetEntity = new BudgetEntity();
             BeanUtils.copyProperties(budgetDto, budgetEntity);
             CategoryEntity category = categoryRepository.findByCategoryId(budgetDto.getCategoryId());
             budgetEntity.setCategory(category);
             budgetEntity.setUser(user);
             return budgetRepository.save(budgetEntity);
-        }
-       else{
-           BudgetEntity budgetEntity = bud.get();
-           budgetEntity.setBudgetAmount(budgetDto.getBudgetAmount()+budgetEntity.getBudgetAmount());
-           return budgetRepository.save(budgetEntity);
-        }
 
+        }
+            BudgetEntity budgetEntity = new BudgetEntity();
+            BeanUtils.copyProperties(budgetDto, budgetEntity);
+            CategoryEntity category = categoryRepository.findByCategoryId(budgetDto.getCategoryId());
+            budgetEntity.setCategory(category);
+            budgetEntity.setUser(user);
+            return budgetRepository.save(budgetEntity);
     }
 
     public BudgetEntity updateUserBudget(String token, Integer id, BudgetDto budgetDetails){

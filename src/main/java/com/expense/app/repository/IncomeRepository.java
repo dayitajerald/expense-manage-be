@@ -1,5 +1,6 @@
 package com.expense.app.repository;
 
+import com.expense.app.dto.TransactionDto;
 import com.expense.app.entity.ExpenseEntity;
 import com.expense.app.entity.IncomeEntity;
 import jakarta.transaction.Transactional;
@@ -21,6 +22,10 @@ public interface IncomeRepository extends JpaRepository<IncomeEntity, Integer> {
 
     @Query("SELECT SUM(i.amount) FROM IncomeEntity i WHERE i.user.authId = :userId")
     Float findSumOfIncomesByUserId(String userId);
+
+    @Query("SELECT i.incomeId AS id, i.amount AS amount, c.name AS categoryName, 'Income' AS categoryType, i.date AS date " +
+            "FROM IncomeEntity i JOIN i.category c")
+    List<TransactionDto> findAllIncomesAsTransactions();
 
     @Transactional
     public void deleteByIncomeId(Integer incomeId);

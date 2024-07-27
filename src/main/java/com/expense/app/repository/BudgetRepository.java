@@ -21,6 +21,9 @@ public interface BudgetRepository extends JpaRepository<BudgetEntity,Integer> {
     @Query("SELECT new com.expense.app.dto.BudgetDto(b.budgetId, c.categoryId, c.name, b.amountSpent, b.budgetAmount) " +
             "FROM BudgetEntity b JOIN b.category c " +
             "WHERE b.user.authId = :userId ")
-    List<BudgetDto> findBudgets(String userId);
+    Optional<List<BudgetDto>> findBudgets(String userId);
+
+    @Query("SELECT b from BudgetEntity b where b.user.authId = :id and b.category.categoryId = :categoryId")
+    BudgetEntity findByIdAndCategoryId(String id, int categoryId);
 
 }

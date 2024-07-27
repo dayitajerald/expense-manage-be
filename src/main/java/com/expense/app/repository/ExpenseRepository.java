@@ -2,9 +2,8 @@ package com.expense.app.repository;
 
 import com.expense.app.dto.CategoryExpenseSumDto;
 import com.expense.app.dto.CategoryExpenseTrendDto;
-import com.expense.app.entity.CategoryEntity;
+import com.expense.app.dto.TransactionDto;
 import com.expense.app.entity.ExpenseEntity;
-import com.expense.app.entity.UserEntity;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -39,6 +38,14 @@ public interface ExpenseRepository extends JpaRepository<ExpenseEntity, Integer>
             "FROM ExpenseEntity e WHERE e.user.authId = :userId AND e.date BETWEEN :startDate AND :endDate " +
             "GROUP BY e.category.name, MONTH(e.date)")
     List<CategoryExpenseTrendDto> findCategoryExpenseTrendsForUser(String userId, LocalDate startDate, LocalDate endDate);
+
+    @Query("SELECT COALESCE(SUM(e.amount), 0) FROM ExpenseEntity e WHERE FUNCTION('DATE_FORMAT', e.date, '%Y-%m') = :month")
+    double getTotalAmountByMonth(@Param("month") String month);
+
+    @Query("SELECT e.expenseId AS id, e.amount AS amount, c.name AS categoryName, 'Expense' AS categoryType, e.date AS date " +
+            "FROM ExpenseEntity e JOIN e.category c")
+    List<TransactionDto> findAllExpensesAsTransactions();
+
 
     @Transactional
     public void deleteByExpenseId(Integer expenseId);

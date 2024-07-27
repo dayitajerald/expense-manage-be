@@ -21,17 +21,13 @@ public class PdfGenerationService {
     private ExpenseRepository expenseRepository;
 
     public byte[] generateExpenseReportForUser(String userId) throws IOException {
-        // Fetch expenses for the specific user
         List<ExpenseEntity> expenses = expenseRepository.findByUserId(userId);
 
-        // Create a new PDF document
         try (PDDocument document = new PDDocument()) {
             PDPage page = new PDPage();
             document.addPage(page);
 
-            // Create a content stream for writing to the PDF
             try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
-                // Title
                 contentStream.setFont(PDType1Font.HELVETICA_BOLD, 16);
                 contentStream.beginText();
                 contentStream.newLineAtOffset(50, 750);

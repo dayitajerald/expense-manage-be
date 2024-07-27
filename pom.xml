@@ -90,9 +90,11 @@
 			<version>2.14.0</version> <!-- Use the latest version compatible with your project -->
 		</dependency>
 
-
-
-
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-jdk8</artifactId>
+			<version>2.14.0</version> <!-- Make sure the version matches your Jackson version -->
+		</dependency>
 
 		<dependency>
 			<groupId>com.mysql</groupId>
