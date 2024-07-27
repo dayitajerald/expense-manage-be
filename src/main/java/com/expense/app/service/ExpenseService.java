@@ -64,6 +64,10 @@ public class ExpenseService {
         return expenseDtos;
     }
 
+    public List<ExpenseEntity> getExpensesByUserId(String userId) {
+        return expenseRepository.findByUserId(userId);
+    }
+
 //    public List<ExpenseEntity> getUserExpenses(String token){
 //        TokenModel tokenModel = jwtTokenUtil.getTokenModelfromToken(token.split(" ")[1]);
 //        String authId = tokenModel.getId();
