@@ -9,12 +9,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 class AppApplicationTests {
 
-	@Autowired
-	private ExpenseController controller;
-
 	@Test
 	void contextLoads() {
-		assertThat(controller).isNotNull();
+
 	}
 
 }

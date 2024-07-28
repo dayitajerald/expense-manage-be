@@ -2,18 +2,22 @@ package com.expense.app.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Data
 @Table(name = "user")
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 @JsonIgnoreProperties({"expenses","incomes","budgets","recurringTransactions"})// Ignore expenses field during serialization
 
 public class UserEntity {
