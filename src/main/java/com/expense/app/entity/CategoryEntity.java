@@ -10,7 +10,7 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "category")
-@JsonIgnoreProperties({"expenses","incomes","budgets"})
+@JsonIgnoreProperties({"expenses", "incomes", "budgets","recurringTransactions"})
 public class CategoryEntity {
     @Id
     private Integer categoryId;
@@ -21,10 +21,13 @@ public class CategoryEntity {
     @OneToMany(mappedBy = "category")
     private List<ExpenseEntity> expenses;
 
-    @OneToMany(fetch = FetchType.LAZY,mappedBy = "category",orphanRemoval = true)
-    private List<IncomeEntity> incomes ;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "category", orphanRemoval = true)
+    private List<IncomeEntity> incomes;
 
     @OneToMany(mappedBy = "category")
     private List<BudgetEntity> budgets;
+
+    @OneToMany(mappedBy = "category")
+    private List<RecurringTransactionEntity> recurringTransactions;
 
 }

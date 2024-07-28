@@ -42,7 +42,6 @@ public class ExpenseService {
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
-    private static final List<String> VALID_CATEGORIES = List.of("Food", "Movie", "Hospital");
 
     public List<ExpenseDto> getUserExpenses(String token) {
         TokenModel tokenModel = jwtTokenUtil.getTokenModelfromToken(token.split(" ")[1]);
@@ -66,12 +65,6 @@ public class ExpenseService {
         return expenseRepository.findByUserId(userId);
     }
 
-//    public List<ExpenseEntity> getUserExpenses(String token){
-//        TokenModel tokenModel = jwtTokenUtil.getTokenModelfromToken(token.split(" ")[1]);
-//        String authId = tokenModel.getId();
-//        List<ExpenseEntity> expenses = expenseRepository.findByUserId(authId);
-//        return expenses;
-//    }
 
     public ExpenseEntity createUserExpense(String token, ExpenseDto data) {
         TokenModel tokenModel = jwtTokenUtil.getTokenModelfromToken(token.split(" ")[1]);
@@ -81,16 +74,11 @@ public class ExpenseService {
         CategoryEntity category = categoryRepository.findByCategoryId(data.getCategory());
         expense.setCategory(category);
         expense.setUser(user);
-        //expense.setDate(LocalDate.now());
 
-        Optional<BudgetEntity> budgetOptional = budgetRepository.findByCategoryId(data.getCategory());
-        if(budgetOptional.isPresent()){
-            BudgetEntity budgetEntity = budgetOptional.get();
-            budgetEntity.setAmountSpent(budgetEntity.getAmountSpent()+expense.getAmount());
-            budgetRepository.save(budgetEntity);
-        }
-        else{
-            throw new RuntimeException("Budget not found for category: " + category.getName());
+        BudgetEntity budgetOptional = budgetRepository.findByIdAndCategoryId(user.getAuthId(), category.getCategoryId());
+        if(budgetOptional != null){
+            budgetOptional.setAmountSpent(budgetOptional.getAmountSpent()+expense.getAmount());
+            budgetRepository.save(budgetOptional);
         }
         return expenseRepository.save(expense);
     }
@@ -102,11 +90,6 @@ public class ExpenseService {
         UserEntity user = userRepository.findById(tokenModel.getId()).orElseThrow(() -> new RuntimeException("User not found"));
         ExpenseEntity expense = expenseRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Expense not found with id: " + id));
-
-        // Validate category
-//        if (!VALID_CATEGORIES.contains(expenseDetails.getCategory())) {
-//            throw new IllegalArgumentException("Invalid category: " + expenseDetails.getCategory());
-//        }
 
         CategoryEntity category = categoryRepository.findByCategoryId(expenseDetails.getCategory());
         expense.setCategory(category);

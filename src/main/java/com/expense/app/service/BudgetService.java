@@ -53,6 +53,7 @@ public class BudgetService {
                 if (budgetDto1.getCategoryId().equals(budgetDto.getCategoryId())) {
                     BudgetEntity budgetEntity = budgetRepository.findByIdAndCategoryId(user.getAuthId(), budgetDto1.getCategoryId());
                     budgetEntity.setBudgetAmount(budgetDto.getBudgetAmount() + budgetEntity.getBudgetAmount());
+                    budgetEntity.setAmountSpent(budgetEntity.getAmountSpent() + budgetEntity.getBudgetAmount());
                     return budgetRepository.save(budgetEntity);
                 }
             }

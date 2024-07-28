@@ -14,7 +14,7 @@ import java.util.List;
 @Entity
 @Data
 @Table(name = "user")
-@JsonIgnoreProperties({"expenses","incomes","budgets"})// Ignore expenses field during serialization
+@JsonIgnoreProperties({"expenses","incomes","budgets","recurringTransactions"})// Ignore expenses field during serialization
 
 public class UserEntity {
     @Id
@@ -37,5 +37,9 @@ public class UserEntity {
 
     @OneToMany(mappedBy = "user")
     private List<BudgetEntity> budgets;
+
+    @OneToMany(mappedBy = "user")
+    private List<RecurringTransactionEntity> recurringTransactions;
+
 
 }
