@@ -1,5 +1,8 @@
 package com.expense.app.service;
 
+import com.expense.app.entity.UserEntity;
+import com.expense.app.middleware.JwtTokenUtil;
+import com.expense.app.model.TokenModel;
 import com.expense.app.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
@@ -13,6 +16,9 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
 
 
     public UserService(JavaMailSender emailSender) {
@@ -29,6 +35,7 @@ public class UserService {
             mailMessage.setText(message);
 
             emailSender.send(mailMessage);
+            System.out.println("Notification sent");
         } else {
             System.err.println("Email not found for user ID: " + userId);
         }
@@ -41,5 +48,22 @@ public class UserService {
         else {
             return null;
         }
+    }
+
+    public UserEntity getProfile(String token) {
+        TokenModel tokenModel = jwtTokenUtil.getTokenModelfromToken(token.split(" ")[1]);
+        if (tokenModel.getRole().equals(0))
+            return userRepository.findByAuthId(tokenModel.getId());
+        else
+            return null;
+    }
+
+    public UserEntity editUserProfile(String token, UserEntity entity) {
+        TokenModel tokenModel = jwtTokenUtil.getTokenModelfromToken(token.split(" ")[1]);
+        UserEntity user = userRepository.findByAuthId(tokenModel.getId());
+        user.setEmail(entity.getEmail());
+        user.setPhone(entity.getPhone());
+        user.setName(entity.getName());
+        return userRepository.save(user);
     }
 }

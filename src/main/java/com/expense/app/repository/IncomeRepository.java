@@ -24,8 +24,8 @@ public interface IncomeRepository extends JpaRepository<IncomeEntity, Integer> {
     Float findSumOfIncomesByUserId(String userId);
 
     @Query("SELECT i.incomeId AS id, i.amount AS amount, c.name AS categoryName, 'Income' AS categoryType, i.date AS date " +
-            "FROM IncomeEntity i JOIN i.category c")
-    List<TransactionDto> findAllIncomesAsTransactions();
+            "FROM IncomeEntity i JOIN i.category c where i.user.authId = :userId")
+    List<TransactionDto> findAllIncomesAsTransactions(@Param("userId") String userId);
 
     @Transactional
     public void deleteByIncomeId(Integer incomeId);

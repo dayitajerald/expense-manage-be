@@ -43,8 +43,8 @@ public interface ExpenseRepository extends JpaRepository<ExpenseEntity, Integer>
     double getTotalAmountByMonth(@Param("month") String month);
 
     @Query("SELECT e.expenseId AS id, e.amount AS amount, c.name AS categoryName, 'Expense' AS categoryType, e.date AS date " +
-            "FROM ExpenseEntity e JOIN e.category c")
-    List<TransactionDto> findAllExpensesAsTransactions();
+            "FROM ExpenseEntity e JOIN e.category c where e.user.authId = :userId")
+    List<TransactionDto> findAllExpensesAsTransactions(@Param("userId") String userId);
 
 
     @Transactional
