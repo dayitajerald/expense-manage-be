@@ -18,10 +18,12 @@ import org.springframework.stereotype.Service;
 import com.expense.app.middleware.JwtTokenUtil;
 
 import javax.swing.text.html.Option;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.WeekFields;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -55,7 +57,6 @@ public class ExpenseService {
             expenseDto.setCategory(expense.getCategory().getCategoryId());
             expenseDto.setDate(expense.getDate());
             expenseDto.setDescription(expense.getDescription());
-            expenseDto.setReceipt(expense.getReceipt());
             expenseDtos.add(expenseDto);
         }
         return expenseDtos;
@@ -96,7 +97,6 @@ public class ExpenseService {
         expense.setAmount(expenseDetails.getAmount());
         expense.setDate(expenseDetails.getDate());
         expense.setDescription(expenseDetails.getDescription());
-        expense.setReceipt(expenseDetails.getReceipt());
 
         return expenseRepository.save(expense);
     }
@@ -135,10 +135,47 @@ public class ExpenseService {
         return expenseRepository.findCategoryExpenseTrendsForUser(authId,startDate, endDate);
     }
 
-    public double getTotalAmountForMonth(String month) {
-        return expenseRepository.getTotalAmountByMonth(month);
+    public double getTotalAmountForMonth(String month, String token) {
+        TokenModel tokenModel = jwtTokenUtil.getTokenModelfromToken(token.split(" ")[1]);
+        String userId = tokenModel.getId();
+        return expenseRepository.getTotalAmountByMonth(month,userId);
 
     }
 
+    public Map<String, Double> getMonthlyExpensesByCategory(Integer categoryId, String token) {
+        TokenModel tokenModel = jwtTokenUtil.getTokenModelfromToken(token.split(" ")[1]);
+        String userId = tokenModel.getId();
+        List<Object[]> results = expenseRepository.findMonthlyExpensesByCategory(categoryId, userId);
+        Map<String, Double> monthlyExpenses = new HashMap<>();
 
+        for (Object[] result : results) {
+            String month = (String) result[0];
+            Double totalExpense = (Double) result[1];
+            monthlyExpenses.put(month, totalExpense);
+        }
+
+        return monthlyExpenses;
+    }
+
+    public Map<String, Map<String, Double>> getWeeklyExpenses(String token, int weekOffset) {
+        TokenModel tokenModel = jwtTokenUtil.getTokenModelfromToken(token.split(" ")[1]);
+        String userId = tokenModel.getId();
+        Map<String, Map<String, Double>> weeklyExpenses = new LinkedHashMap<>();
+
+        LocalDate today = LocalDate.now().minusWeeks(weekOffset);
+        LocalDate startOfWeek = today.with(DayOfWeek.MONDAY);
+
+        for (int i = 0; i < 7; i++) {
+            LocalDate day = startOfWeek.plusDays(i);
+            Map<String, Double> dailyExpenses = expenseRepository.findByUserIdAndDate(userId, day)
+                    .stream()
+                    .collect(Collectors.groupingBy(
+                            expense -> expense.getCategory().getName(),  // Assuming getCategory().getName() returns the category name
+                            Collectors.summingDouble(ExpenseEntity::getAmount)
+                    ));
+            weeklyExpenses.put(day.getDayOfWeek().name(), dailyExpenses);
+        }
+
+        return weeklyExpenses;
+    }
 }

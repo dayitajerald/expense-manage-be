@@ -21,7 +21,6 @@ public class ExpenseEntity {
     private Float amount;
     private String description;
     private LocalDate date;
-    private String receipt;
 
     @CreationTimestamp
     private LocalDateTime created_at;

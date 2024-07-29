@@ -11,5 +11,4 @@ public class ExpenseDto {
     private Integer category;
     private String description;
     private LocalDate date;
-    private String receipt;
 }

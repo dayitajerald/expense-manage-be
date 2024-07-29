@@ -27,6 +27,9 @@ public interface IncomeRepository extends JpaRepository<IncomeEntity, Integer> {
             "FROM IncomeEntity i JOIN i.category c where i.user.authId = :userId")
     List<TransactionDto> findAllIncomesAsTransactions(@Param("userId") String userId);
 
+    @Query("SELECT MONTH(i.date) as month, SUM(i.amount) as totalIncome FROM IncomeEntity i WHERE i.user.authId = :userId GROUP BY MONTH(i.date)")
+    List<Object[]> findMonthlyIncomes(String userId);
+
     @Transactional
     public void deleteByIncomeId(Integer incomeId);
 }

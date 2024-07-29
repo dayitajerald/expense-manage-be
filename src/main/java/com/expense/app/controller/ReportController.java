@@ -2,21 +2,24 @@ package com.expense.app.controller;
 import com.expense.app.middleware.JwtTokenUtil;
 import com.expense.app.model.TokenModel;
 import com.expense.app.service.PdfGenerationService;
+import com.expense.app.service.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.Map;
 
 @RestController
-@RequestMapping("/api/expenses")
+@RequestMapping("/reports")
+@CrossOrigin("http://localhost:5173")
 public class ReportController {
+
+    @Autowired
+    private ReportService reportService;
 
     @Autowired
     private PdfGenerationService pdfGenerationService;
@@ -41,4 +44,11 @@ public class ReportController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping("/monthly")
+    public Map<String, Object> getMonthlyIncomeAndExpenses(@RequestHeader("Authorization") String token) {
+        return reportService.getMonthlyIncomeAndExpenses(token);
+    }
+
+
 }

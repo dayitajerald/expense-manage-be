@@ -76,10 +76,10 @@ public class ExpenseController {
     @GetMapping("/percentage-change")
     public ResponseEntity<PercentageChangeDto> getPercentageChange(
             @RequestParam("currentMonth") String currentMonth,
-            @RequestParam("previousMonth") String previousMonth) {
+            @RequestParam("previousMonth") String previousMonth,@RequestHeader("Authorization") String token) {
 
-        double currentMonthTotal = expenseService.getTotalAmountForMonth(currentMonth);
-        double previousMonthTotal = expenseService.getTotalAmountForMonth(previousMonth);
+        double currentMonthTotal = expenseService.getTotalAmountForMonth(currentMonth,token);
+        double previousMonthTotal = expenseService.getTotalAmountForMonth(previousMonth,token);
 
         double percentageChange = 0;
         if (previousMonthTotal > 0) {
@@ -94,7 +94,19 @@ public class ExpenseController {
         return ResponseEntity.ok(dto);
     }
 
+    @GetMapping("/category/{categoryId}/monthly")
+    public ResponseEntity<Map<String, Double>> getMonthlyExpensesByCategory(
+            @PathVariable Integer categoryId, @RequestHeader("Authorization") String token) {
+        Map<String, Double> monthlyExpenses = expenseService.getMonthlyExpensesByCategory(categoryId, token);
+        return ResponseEntity.ok(monthlyExpenses);
+    }
 
+    @GetMapping("/weekly")
+    public ResponseEntity<Map<String, Map<String, Double>>> getWeeklyExpenses(@RequestHeader("Authorization") String token,
+            @RequestParam(required = false, defaultValue = "0") int weekOffset) {
+        Map<String, Map<String, Double>> weeklyExpenses = expenseService.getWeeklyExpenses(token, weekOffset);
+        return ResponseEntity.ok(weeklyExpenses);
+    }
 //    @PostMapping("/trigger-notifications")
 //    public ResponseEntity<String> triggerNotifications() {
 //        try {
@@ -104,5 +116,7 @@ public class ExpenseController {
 //            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to trigger notification check.");
 //        }
 //    }
+
+
 
 }
