@@ -36,7 +36,7 @@ public class BudgetController {
     }
 
     @DeleteMapping("/{budgetId}")
-    public void deleteUserExpense(@RequestHeader("Authorization") String token, @PathVariable Integer budgetId){
+    public void deleteUserBudget(@RequestHeader("Authorization") String token, @PathVariable Integer budgetId){
         budgetService.deleteUserBudget(token,budgetId);
     }
 
