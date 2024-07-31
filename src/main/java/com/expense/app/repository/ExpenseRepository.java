@@ -21,8 +21,6 @@ public interface ExpenseRepository extends JpaRepository<ExpenseEntity, Integer>
 
     ExpenseEntity findByExpenseId(Integer expenseId);
 
-
-
     @Query("SELECT SUM(e.amount) FROM ExpenseEntity e WHERE e.user.authId = :userId")
     Float findSumOfExpensesByUserId(String userId);
 

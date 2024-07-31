@@ -2,6 +2,7 @@ package com.expense.app.repository;
 
 import com.expense.app.dto.BudgetDto;
 import com.expense.app.entity.BudgetEntity;
+import com.expense.app.entity.ExpenseEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,6 +15,9 @@ import java.util.Optional;
 public interface BudgetRepository extends JpaRepository<BudgetEntity,Integer> {
 
     BudgetEntity findById(int id);
+
+    @Query("SELECT b from BudgetEntity b where b.user.authId = :userId")
+    List<BudgetEntity> findByUserId(@Param("userId") String userId);
 
     @Query("SELECT b from BudgetEntity b where b.category.categoryId = :category")
     Optional<BudgetEntity> findByCategoryId(@Param("category") Integer category);
