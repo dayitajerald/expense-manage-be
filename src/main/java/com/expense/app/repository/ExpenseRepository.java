@@ -39,7 +39,7 @@ public interface ExpenseRepository extends JpaRepository<ExpenseEntity, Integer>
             "GROUP BY e.category.name, MONTH(e.date)")
     List<CategoryExpenseTrendDto> findCategoryExpenseTrendsForUser(String userId, LocalDate startDate, LocalDate endDate);
 
-    @Query("SELECT COALESCE(SUM(e.amount), 0) FROM ExpenseEntity e WHERE FUNCTION('DATE_FORMAT', e.date, '%Y-%m') = :month AND e.user.authId = :userId")
+    @Query("SELECT SUM(e.amount) FROM ExpenseEntity e WHERE EXTRACT( YEAR_MONTH FROM e.date ) = :month AND e.user.authId = :userId")
     double getTotalAmountByMonth(@Param("month") String month, String userId);
 
     @Query("SELECT e.expenseId AS id, e.amount AS amount, c.name AS categoryName, 'Expense' AS categoryType, e.date AS date " +
