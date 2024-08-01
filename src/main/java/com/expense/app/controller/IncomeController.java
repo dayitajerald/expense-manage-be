@@ -1,6 +1,7 @@
 package com.expense.app.controller;
 
 import com.expense.app.dto.IncomeDto;
+import com.expense.app.dto.PercentageChangeDto;
 import com.expense.app.dto.TotalIncomeDto;
 import com.expense.app.entity.ExpenseEntity;
 import com.expense.app.entity.IncomeEntity;
@@ -52,4 +53,24 @@ public class IncomeController {
         return incomeService.getTotalIncome(token);
     }
 
+    @GetMapping("/percentage-change")
+    public ResponseEntity<PercentageChangeDto> getPercentageChange(
+            @RequestParam("currentMonth") String currentMonth,
+            @RequestParam("previousMonth") String previousMonth,@RequestHeader("Authorization") String token) {
+
+        double currentMonthTotal = incomeService.getTotalAmountForMonth(currentMonth,token);
+        double previousMonthTotal = incomeService.getTotalAmountForMonth(previousMonth,token);
+
+        double percentageChange = 0;
+        if (previousMonthTotal > 0) {
+            percentageChange = ((currentMonthTotal - previousMonthTotal) / previousMonthTotal) * 100;
+        }
+
+        PercentageChangeDto dto = new PercentageChangeDto();
+        dto.setCurrentMonthTotal(currentMonthTotal);
+        dto.setPreviousMonthTotal(previousMonthTotal);
+        dto.setPercentageChange(percentageChange);
+
+        return ResponseEntity.ok(dto);
+    }
 }

@@ -30,6 +30,9 @@ public interface IncomeRepository extends JpaRepository<IncomeEntity, Integer> {
     @Query("SELECT MONTH(i.date) as month, SUM(i.amount) as totalIncome FROM IncomeEntity i WHERE i.user.authId = :userId GROUP BY MONTH(i.date)")
     List<Object[]> findMonthlyIncomes(String userId);
 
+    @Query("SELECT coalesce(SUM(i.amount),0) FROM IncomeEntity i WHERE FUNCTION('DATE_FORMAT', i.date, '%Y%m') = :month AND i.user.authId = :userId")
+    double getTotalAmountByMonth(@Param("month") String month, @Param("userId") String userId);
+
     @Transactional
     public void deleteByIncomeId(Integer incomeId);
 }

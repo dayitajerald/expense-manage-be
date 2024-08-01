@@ -97,4 +97,11 @@ public class IncomeService {
         tid.setTotalIncome(incomeRepository.findSumOfIncomesByUserId(authId));
         return tid;
     }
+
+    public double getTotalAmountForMonth(String month, String token) {
+        TokenModel tokenModel = jwtTokenUtil.getTokenModelfromToken(token.split(" ")[1]);
+        String userId = tokenModel.getId();
+        return incomeRepository.getTotalAmountByMonth(month,userId);
+
+    }
 }
