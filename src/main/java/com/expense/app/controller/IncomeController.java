@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@CrossOrigin("http://localhost:517")
+@CrossOrigin("http://localhost:5173")
 @RequestMapping("/incomes")
 public class IncomeController {
     @Autowired
