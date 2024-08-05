@@ -40,4 +40,9 @@ public class BudgetController {
         budgetService.deleteUserBudget(token,budgetId);
     }
 
+    @PutMapping("/reset/{id}")
+    public void resetBudget(@RequestHeader("Authorization") String token,@PathVariable Integer id){
+        budgetService.resetUserBudget(token,id);
+    }
+
 }

@@ -6,6 +6,7 @@ import java.time.LocalDate;
 
 @Data
 public class RecurringTransactionDto {
+    private Integer recurringTransactionId;
     private Float amount;
     private Integer categoryId;
     private LocalDate startDate;

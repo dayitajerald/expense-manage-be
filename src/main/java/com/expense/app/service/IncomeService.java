@@ -1,5 +1,6 @@
 package com.expense.app.service;
 
+import com.expense.app.dto.CategoryExpenseSumDto;
 import com.expense.app.dto.ExpenseDto;
 import com.expense.app.dto.IncomeDto;
 import com.expense.app.dto.TotalIncomeDto;
@@ -36,32 +37,31 @@ public class IncomeService {
     private JwtTokenUtil jwtTokenUtil;
 
 
-//    public List<IncomeDto> getUserExpenses(String token) {
-//        TokenModel tokenModel = jwtTokenUtil.getTokenModelfromToken(token.split(" ")[1]);
-//        String authId = tokenModel.getId();
-//        List<IncomeEntity> incomes = incomeRepository.findByUserId(authId);
-//        List<IncomeDto> incomeDtos = new ArrayList<>();
-//        for (IncomeEntity income : incomes) {
-//            IncomeDto incomeDto = new IncomeDto();
-//            incomeDto.setIncomeId(income.getIncomeId());
-//            incomeDto.setAmount(income.getAmount());
-//            incomeDto.setCategory(income.getCategoryId());
-//            incomeDto.setDate(income.getDate().toString());
-//            incomeDto.setUserName(income.getUser().getName());
-//            incomeDtos.add(incomeDto);
-//        }
-//        return incomeDtos;
-//    }
-
-    public List<IncomeEntity> getUserIncomes(String token){
+    public List<IncomeDto> getUserIncomes(String token) {
         TokenModel tokenModel = jwtTokenUtil.getTokenModelfromToken(token.split(" ")[1]);
         String authId = tokenModel.getId();
         List<IncomeEntity> incomes = incomeRepository.findByUserId(authId);
-        return incomes;
+        List<IncomeDto> incomeDtos = new ArrayList<>();
+        for (IncomeEntity income : incomes) {
+            IncomeDto incomeDto = new IncomeDto();
+            incomeDto.setIncomeId(income.getIncomeId());
+            incomeDto.setAmount(income.getAmount());
+            incomeDto.setCategory(income.getCategory().getCategoryId());
+            incomeDto.setDate(income.getDate().toString());
+            incomeDtos.add(incomeDto);
+        }
+        return incomeDtos;
     }
 
+//    public List<IncomeEntity> getUserIncomes(String token){
+//        TokenModel tokenModel = jwtTokenUtil.getTokenModelfromToken(token.split(" ")[1]);
+//        String authId = tokenModel.getId();
+//        List<IncomeEntity> incomes = incomeRepository.findByUserId(authId);
+//        return incomes;
+//    }
 
-    public IncomeEntity createUserExpense(String token, IncomeDto data) {
+
+    public IncomeEntity createUserIncome(String token, IncomeDto data) {
         TokenModel tokenModel = jwtTokenUtil.getTokenModelfromToken(token.split(" ")[1]);
         UserEntity user = userRepository.findById(tokenModel.getId()).orElseThrow(() -> new RuntimeException("User not found"));
         IncomeEntity income = new IncomeEntity();
@@ -102,6 +102,11 @@ public class IncomeService {
         TokenModel tokenModel = jwtTokenUtil.getTokenModelfromToken(token.split(" ")[1]);
         String userId = tokenModel.getId();
         return incomeRepository.getTotalAmountByMonth(month,userId);
+    }
 
+    public List<CategoryExpenseSumDto> getSumOfAmountByCategory(String token){
+        TokenModel tokenModel = jwtTokenUtil.getTokenModelfromToken(token.split(" ")[1]);
+        String authId = tokenModel.getId();
+        return incomeRepository.findSumOfAmountByCategoryForUser(authId);
     }
 }

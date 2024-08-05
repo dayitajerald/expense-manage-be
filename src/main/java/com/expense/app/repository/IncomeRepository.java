@@ -1,5 +1,6 @@
 package com.expense.app.repository;
 
+import com.expense.app.dto.CategoryExpenseSumDto;
 import com.expense.app.dto.TransactionDto;
 import com.expense.app.entity.ExpenseEntity;
 import com.expense.app.entity.IncomeEntity;
@@ -32,6 +33,12 @@ public interface IncomeRepository extends JpaRepository<IncomeEntity, Integer> {
 
     @Query("SELECT coalesce(SUM(i.amount),0) FROM IncomeEntity i WHERE FUNCTION('DATE_FORMAT', i.date, '%Y%m') = :month AND i.user.authId = :userId")
     double getTotalAmountByMonth(@Param("month") String month, @Param("userId") String userId);
+
+    @Query("SELECT new com.expense.app.dto.CategoryExpenseSumDto(c.name, SUM(i.amount)) " +
+            "FROM IncomeEntity i JOIN i.category c " +
+            "WHERE i.user.authId = :userId " +
+            "GROUP BY c.name")
+    List<CategoryExpenseSumDto> findSumOfAmountByCategoryForUser(String userId);
 
     @Transactional
     public void deleteByIncomeId(Integer incomeId);

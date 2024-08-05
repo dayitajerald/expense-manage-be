@@ -1,6 +1,12 @@
 package com.expense.app.service;
 import com.expense.app.entity.BudgetEntity;
+import com.expense.app.entity.NotificationEntity;
+import com.expense.app.middleware.JwtTokenUtil;
+import com.expense.app.model.TokenModel;
 import com.expense.app.repository.BudgetRepository;
+import com.expense.app.repository.NotificationRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +21,12 @@ public class NotificationService {
 
     private final BudgetRepository budgetRepository;
     private final UserService userService;
+
+    @Autowired
+    private NotificationRepository notificationRepository;
+
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
 
     public NotificationService(BudgetRepository budgetRepository, UserService userService) {
         this.budgetRepository = budgetRepository;
@@ -44,6 +56,14 @@ public class NotificationService {
         }
     }
 
+    public NotificationEntity markAsPaid(String token, Integer id) {
+        TokenModel tokenModel = jwtTokenUtil.getTokenModelfromToken(token.split(" ")[1]);
+        String authId = tokenModel.getId();
+        NotificationEntity notification = notificationRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Notification not found with id: " + id));
+        notification.setIsPaid(true);
+        return notificationRepository.save(notification);
+    }
 //    public void manuallyTriggerCheck() {
 //        logger.info("Manually triggering notification check.");
 //        checkBudgetsAndSendNotifications();

@@ -1,5 +1,6 @@
 package com.expense.app.controller;
 
+import com.expense.app.dto.CategoryExpenseSumDto;
 import com.expense.app.dto.IncomeDto;
 import com.expense.app.dto.PercentageChangeDto;
 import com.expense.app.dto.TotalIncomeDto;
@@ -20,14 +21,14 @@ public class IncomeController {
     private IncomeService incomeService;
 
     @GetMapping()
-    public List<IncomeEntity> getUserIncomes(@RequestHeader("Authorization") String token) {
+    public List<IncomeDto> getUserIncomes(@RequestHeader("Authorization") String token) {
         return incomeService.getUserIncomes(token);
     }
 
     @PostMapping()
     public IncomeEntity createUserIncome(@RequestHeader("Authorization") String token,
             @RequestBody IncomeDto income) {
-        return incomeService.createUserExpense(token, income);
+        return incomeService.createUserIncome(token, income);
     }
 
     @PatchMapping("/{expenseId}")
@@ -72,5 +73,10 @@ public class IncomeController {
         dto.setPercentageChange(percentageChange);
 
         return ResponseEntity.ok(dto);
+    }
+
+    @GetMapping("/sum-by-category")
+    public List<CategoryExpenseSumDto> getSumofAmountByCategory(@RequestHeader("Authorization") String token){
+        return incomeService.getSumOfAmountByCategory(token);
     }
 }

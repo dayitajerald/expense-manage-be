@@ -94,5 +94,13 @@ public class BudgetService {
         budgetRepository.delete(existingBudget);
     }
 
+    public void resetUserBudget(String token, Integer id) {
+        TokenModel tokenModel = jwtTokenUtil.getTokenModelfromToken(token.split(" ")[1]);
+        UserEntity user = userRepository.findById(tokenModel.getId()).orElseThrow(() -> new RuntimeException("User not found"));
+        BudgetEntity existingBudget = budgetRepository.findById(id).orElseThrow(() -> new RuntimeException("Budget not found"));
+        existingBudget.setAmountSpent(0.0f);
+        budgetRepository.save(existingBudget);
+    }
+
 
 }
