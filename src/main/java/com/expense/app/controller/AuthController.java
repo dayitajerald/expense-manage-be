@@ -1,6 +1,7 @@
 package com.expense.app.controller;
 
 import com.expense.app.dto.AuthDto;
+import com.expense.app.dto.PasswordChangeDto;
 import com.expense.app.dto.RegisterDto;
 import com.expense.app.entity.AuthEntity;
 import com.expense.app.repository.AuthRepository;
@@ -24,6 +25,11 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<RegisterDto> handleRegister(@RequestBody RegisterDto body){
         return authService.register(body);
+    }
+
+    @PostMapping("/changepassword")
+    public ResponseEntity<PasswordChangeDto> passwordChange(@RequestBody PasswordChangeDto data, @RequestHeader("Authorization") String token){
+        return authService.changePassword(data, token);
     }
 
 }

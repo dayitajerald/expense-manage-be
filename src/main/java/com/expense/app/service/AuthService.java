@@ -1,6 +1,7 @@
 package com.expense.app.service;
 
 import com.expense.app.dto.AuthDto;
+import com.expense.app.dto.PasswordChangeDto;
 import com.expense.app.dto.RegisterDto;
 import com.expense.app.entity.AuthEntity;
 import com.expense.app.entity.UserEntity;
@@ -10,6 +11,7 @@ import com.expense.app.repository.AuthRepository;
 import com.expense.app.repository.UserRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -91,5 +93,24 @@ public class AuthService {
                 return false;
             }
         }
+    }
+
+    public ResponseEntity<PasswordChangeDto> changePassword(PasswordChangeDto data, String token){
+        TokenModel tokenModel = jwtTokenUtil.getTokenModelfromToken(token.split(" ")[1]);
+        String authId = tokenModel.getId();
+        AuthEntity auth = authRepo.findById(authId).get();
+        BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
+        boolean pwdCheck = bcrypt.matches(data.getCurrentPassword(), auth.getPassword());
+        if (!pwdCheck) {
+            data.setStatus("error");
+            data.setMessage("Current password is incorrect.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(data);
+        }
+
+        auth.setPassword(bcrypt.encode(data.getNewPassword()));
+        authRepo.save(auth);
+        data.setStatus("success");
+        data.setMessage("Password changed successfully.");
+        return ResponseEntity.ok(data);
     }
 }
