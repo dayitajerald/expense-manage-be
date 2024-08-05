@@ -7,7 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
+@CrossOrigin("http://localhost:5173")
 @RequestMapping("/notifications")
 public class NotificationController {
     @Autowired
@@ -15,7 +18,13 @@ public class NotificationController {
     @Autowired
     private NotificationService notificationService;
 
-    @PutMapping("/{id}/mark-as-paid")
+    @GetMapping("/all")
+    public List<NotificationEntity> getAllNotifications(@RequestHeader("Authorization") String token) {
+        return notificationService.getAllNotifications(token);
+
+    }
+
+    @PutMapping("/mark-as-paid/{id}")
     public NotificationEntity markAsPaid(@RequestHeader("Authorization") String token,@PathVariable Integer id) {
         return notificationService.markAsPaid(token,id);
     }

@@ -23,13 +23,18 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<RegisterDto> handleRegister(@RequestBody RegisterDto body){
+    public ResponseEntity<RegisterDto> handleRegister(@RequestBody RegisterDto body) throws Exception {
         return authService.register(body);
     }
 
     @PostMapping("/changepassword")
     public ResponseEntity<PasswordChangeDto> passwordChange(@RequestBody PasswordChangeDto data, @RequestHeader("Authorization") String token){
         return authService.changePassword(data, token);
+    }
+
+    @PostMapping("/forgot-password")
+    public void forgotPassword(@RequestParam String email){
+         authService.forgotPasswordMail(email);
     }
 
 }

@@ -25,6 +25,9 @@ public class AuthService {
     private UserRepository userRepo;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
     public ResponseEntity<AuthDto> login(AuthEntity user) {
@@ -50,7 +53,7 @@ public class AuthService {
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
-    public ResponseEntity<RegisterDto> register(RegisterDto user) {
+    public ResponseEntity<RegisterDto> register(RegisterDto user) throws Exception {
         if (authRepo.existsByUsername(user.getUsername())) {
             user.setStatus(401);
             user.setMessage("Username already exists");
@@ -70,6 +73,11 @@ public class AuthService {
                 userRepo.save(customer);
                 user.setStatus(201);
                 user.setMessage("User registered successfully");
+
+                // Send welcome email
+                String welcomeMessage = "Welcome to Expensio! We're glad to have you. Get ready to manage your expenses like a pro.";
+                String gifPath = "C:/Users/javis/OneDrive/Desktop/expensemanage/expense-manage-be/moneyanim.gif"; // Change to the path of your GIF
+                userService.sendWelcomeEmail(user.getEmail(), welcomeMessage, gifPath);
 
             } else {
                 user.setStatus(401);
@@ -112,5 +120,9 @@ public class AuthService {
         data.setStatus("success");
         data.setMessage("Password changed successfully.");
         return ResponseEntity.ok(data);
+    }
+
+    public void forgotPasswordMail(String email) {
+         userService.sendMailForgotPassword(email,"You can change your password in this link http://localhost:5173/forgotpassword ");
     }
 }

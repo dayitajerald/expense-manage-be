@@ -3,6 +3,7 @@ package com.expense.app.controller;
 import com.expense.app.dto.ExpenseDto;
 import com.expense.app.dto.Recommendation;
 import com.expense.app.entity.ExpenseEntity;
+import com.expense.app.entity.RecommendationEntity;
 import com.expense.app.middleware.JwtTokenUtil;
 import com.expense.app.model.TokenModel;
 import com.expense.app.service.ExpenseService;
@@ -33,6 +34,11 @@ public class PredictionController {
     public List<Recommendation> gemini(@RequestHeader("Authorization") String token) throws IOException {
         List<ExpenseDto> expenses = expenseService.getUserExpenses(token);
         return geminiService.getRecommendations(expenses);
+    }
+
+    @GetMapping("/getcacheddata")
+    public List<Recommendation> getCachedData(@RequestHeader("Authorization") String token) throws IOException {
+        return geminiService.getRecommendationsFromTable();
     }
 
 

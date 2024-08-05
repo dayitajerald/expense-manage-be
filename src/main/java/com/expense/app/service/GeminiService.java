@@ -2,9 +2,12 @@ package com.expense.app.service;
 
 import com.expense.app.dto.ExpenseDto;
 import com.expense.app.dto.Recommendation;
+import com.expense.app.entity.RecommendationEntity;
+import com.expense.app.repository.RecommendationRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -23,6 +26,9 @@ public class GeminiService {
     private final RestTemplate restTemplate;
     private final ExpenseService expenseService;
     private final ObjectMapper objectMapper;
+
+    @Autowired
+    private RecommendationRepository recommendationRepository;
 
     @Autowired
     public GeminiService(RestTemplate restTemplate, ExpenseService expenseService, ObjectMapper objectMapper) {
@@ -90,5 +96,15 @@ public class GeminiService {
         }
 
         return recommendations;
+    }
+
+    public List<Recommendation> getRecommendationsFromTable() throws IOException {
+        return recommendationRepository.findRecommendationFromTable();
+    }
+
+    public void addRecommendation(Recommendation recommendation) {
+        RecommendationEntity recommendationEntity = new RecommendationEntity();
+        BeanUtils.copyProperties(recommendation, recommendationEntity);
+        recommendationRepository.save(recommendationEntity);
     }
 }

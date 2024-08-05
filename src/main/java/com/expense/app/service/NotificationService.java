@@ -64,6 +64,13 @@ public class NotificationService {
         notification.setIsPaid(true);
         return notificationRepository.save(notification);
     }
+
+    public List<NotificationEntity> getAllNotifications(String token) {
+        TokenModel tokenModel = jwtTokenUtil.getTokenModelfromToken(token.split(" ")[1]);
+        String authId = tokenModel.getId();
+        List<NotificationEntity> notifications = notificationRepository.findByUserId(authId);
+        return notifications;
+    }
 //    public void manuallyTriggerCheck() {
 //        logger.info("Manually triggering notification check.");
 //        checkBudgetsAndSendNotifications();

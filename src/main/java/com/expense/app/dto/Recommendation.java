@@ -12,4 +12,7 @@ public class Recommendation {
         this.suggestion = suggestion;
         this.example = example;
     }
+
+    public Recommendation() {
+    }
 }
