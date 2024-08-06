@@ -34,7 +34,7 @@ public class NotificationService {
     }
 
     //@Scheduled(cron = "0 0/5 * * * ?")
-    @Scheduled(cron = "0 * * * * ?")
+    //@Scheduled(cron = "0 * * * * ?")
     //@Scheduled(cron = "0 0 9 * * *")
     public void checkBudgetsAndSendNotifications() {
         try {

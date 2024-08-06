@@ -79,7 +79,14 @@ public class AuthService {
                 String gifPath = "C:/Users/javis/OneDrive/Desktop/expensemanage/expense-manage-be/moneyanim.gif"; // Change to the path of your GIF
                 userService.sendWelcomeEmail(user.getEmail(), welcomeMessage, gifPath);
 
-            } else {
+            } else if (auth.getRole() == 1) {
+                UserEntity admin = new UserEntity();
+                BeanUtils.copyProperties(user, admin);
+                admin.setAuthId(auth.getId());
+                userRepo.save(admin);
+                user.setStatus(201);
+                user.setMessage("Admin registered successfully");
+            }else {
                 user.setStatus(401);
                 user.setMessage("Invalid role");
             }

@@ -105,7 +105,7 @@ public class RecurringTransactionService {
     }
 
     //@Scheduled(cron = "0 0 0 * * ?") // Runs daily at midnight
-    @Scheduled(cron = "0 * * * * ?") // Runs every minute
+    //@Scheduled(cron = "0 * * * * ?") // Runs every minute
     public void processRecurringTransactions() {
         LocalDate today = LocalDate.now();
         List<RecurringTransactionEntity> recurringTransactions = recurringTransactionRepository.findAll();
